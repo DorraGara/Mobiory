@@ -16,7 +16,7 @@ abstract class AppDatabase : RoomDatabase() {
         private var Instance: AppDatabase? = null
 
         fun getDatabase(context: Context): AppDatabase {
-            // if the Instance is not null, return it, otherwise create a new database instance.
+            // Create new database instance or return the existing one.
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
                     .addCallback(PrepopulateRoomCallback(context))

@@ -8,8 +8,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.io.File
+import javax.inject.Inject
 
-class EventRepository(private val eventDao: EventDao) {
+class EventRepository @Inject constructor(private val eventDao: EventDao) {
 
     // LiveData for the list of events
     fun getAllEvents(): LiveData<List<Event>> {

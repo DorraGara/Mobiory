@@ -22,7 +22,7 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
         }
     }
 
-    suspend fun prePopulateEvents(context: Context) {
+    private suspend fun prePopulateEvents(context: Context) {
         try {
             val eventDao = AppDatabase.getDatabase(context).eventDao()
 
@@ -30,7 +30,6 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
                 context.resources.openRawResource(R.raw.events).bufferedReader().use {
                     JSONArray(it.readText())
                 }
-
             eventsList.takeIf { it.length() > 0 }?.let { list ->
                 for (index in 0 until list.length()) {
                     val eventObj = list.getJSONObject(index)
@@ -45,11 +44,11 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
                     )
 
                 }
-                Log.e("Mobiory App", "successfully pre-populated events into database")
+                Log.i("Mobiory App", "successfully pre-populated events into database")
             }
         } catch (exception: Exception) {
             Log.e(
-                "Mobiory App",
+                "Mobiory App import data error",
                 exception.localizedMessage ?: "failed to pre-populate events into database"
             )
         }

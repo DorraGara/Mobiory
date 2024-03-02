@@ -3,7 +3,6 @@ package com.example.mobiory
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,10 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.mobiory.data.AppContainer
-import com.example.mobiory.data.AppDataContainer
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobiory.ui.theme.MobioryTheme
 import com.example.mobiory.ui.viewModel.EventListViewModel
+import dagger.hilt.android.AndroidEntryPoint
+
 
 @Preview(showBackground = true)
 @Composable
@@ -39,15 +39,10 @@ fun MainScreenPreview() {
     }
 }
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    private lateinit var appContainer: AppContainer
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //appContainer = AppDataContainer(applicationContext)
-        //val eventListViewModel: EventListViewModel by viewModels()
 
         setContent {
             MobioryTheme {
@@ -56,7 +51,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    //MainScreen(eventListViewModel)
                     MainScreen()
                 }
             }
@@ -65,7 +59,6 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-//fun MainScreen(eventListViewModel : EventListViewModel) {
 fun MainScreen() {
     Column {
         Button(onClick = {
@@ -73,13 +66,13 @@ fun MainScreen() {
             Text("Import Events")
         }
 
-        //EventList(eventListViewModel)
+        EventList()
     }
 }
 
 @Composable
-fun EventList(eventListViewModel: EventListViewModel) {
-
+fun EventList() {
+    val eventListViewModel = hiltViewModel<EventListViewModel>()
     val events by eventListViewModel.eventList.collectAsState(initial = emptyList())
 
     LazyColumn(contentPadding = PaddingValues(8.dp),
