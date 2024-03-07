@@ -2,15 +2,15 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "208f5d15a6dd31d0255c7c2a6147b69f",
+    "identityHash": "fbdb26ace5f27921c195c4463629a92c",
     "entities": [
       {
         "tableName": "events",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `label` TEXT NOT NULL, `aliases` TEXT NOT NULL, `description` TEXT NOT NULL, `wikipedia` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`eventId` INTEGER NOT NULL, `label` TEXT NOT NULL, `aliases` TEXT NOT NULL, `description` TEXT NOT NULL, `wikipedia` TEXT NOT NULL, `sourceId` INTEGER, `en` INTEGER, `fr` INTEGER, PRIMARY KEY(`eventId`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "eventId",
+            "columnName": "eventId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -37,12 +37,74 @@
             "columnName": "wikipedia",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "sourceId",
+            "columnName": "sourceId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "popularity.en",
+            "columnName": "en",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "popularity.fr",
+            "columnName": "fr",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "id"
+            "eventId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "claims",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`claimId` INTEGER NOT NULL, `verbose_name` TEXT NOT NULL, `value` TEXT NOT NULL, `eventIdParent` INTEGER, `eventIdChild` INTEGER, PRIMARY KEY(`claimId`))",
+        "fields": [
+          {
+            "fieldPath": "claimId",
+            "columnName": "claimId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verboseName",
+            "columnName": "verbose_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventIdParent",
+            "columnName": "eventIdParent",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "eventIdChild",
+            "columnName": "eventIdChild",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "claimId"
           ]
         },
         "indices": [],
@@ -52,7 +114,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '208f5d15a6dd31d0255c7c2a6147b69f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fbdb26ace5f27921c195c4463629a92c')"
     ]
   }
 }
