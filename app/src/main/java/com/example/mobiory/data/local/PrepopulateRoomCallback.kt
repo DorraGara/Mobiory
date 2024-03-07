@@ -18,11 +18,11 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
         super.onCreate(db)
 
         CoroutineScope(Dispatchers.IO).launch {
-            prePopulateEvents(context)
+            prePopulateEvents()
         }
     }
 
-    private suspend fun prePopulateEvents(context: Context) {
+    private suspend fun prePopulateEvents() {
         try {
             val eventDao = AppDatabase.getDatabase(context).eventDao()
 
@@ -52,5 +52,22 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
                 exception.localizedMessage ?: "failed to pre-populate events into database"
             )
         }
+    }
+    private suspend fun deleteAllData() {
+        try {
+            val eventDao = AppDatabase.getDatabase(context).eventDao()
+            eventDao.deleteAll()
+            Log.i("Mobiory App delete data error", "all deleted ")
+
+        } catch (exception: Exception) {
+            Log.e(
+                "Mobiory App delete data error",
+                exception.localizedMessage ?: "failed to delete events from database"
+            )
+        }
+    }
+    suspend fun updateDatabase() {
+        this.deleteAllData()
+        this.prePopulateEvents()
     }
 }

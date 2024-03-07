@@ -7,6 +7,9 @@ import androidx.room.RoomDatabase
 import com.example.mobiory.data.local.EventDao
 import com.example.mobiory.data.local.PrepopulateRoomCallback
 import com.example.mobiory.data.model.Event
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Database(entities = [Event::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
@@ -22,6 +25,11 @@ abstract class AppDatabase : RoomDatabase() {
                     .addCallback(PrepopulateRoomCallback(context))
                     .build()
                     .also { Instance = it }
+            }
+        }
+        fun updatetDatabase(context: Context) {
+            CoroutineScope(Dispatchers.IO).launch {
+                PrepopulateRoomCallback(context).updateDatabase()
             }
         }
     }

@@ -23,9 +23,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mobiory.data.AppDatabase
 import com.example.mobiory.ui.theme.MobioryTheme
 import com.example.mobiory.ui.viewModel.EventListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,8 +62,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
+    val context = LocalContext.current
+
     Column {
         Button(onClick = {
+            AppDatabase.updatetDatabase(context)
         }) {
             Text("Import Events")
         }
