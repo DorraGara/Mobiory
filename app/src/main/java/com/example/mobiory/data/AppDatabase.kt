@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.mobiory.data.local.DateTypeConverter
 import com.example.mobiory.data.local.EventDao
 import com.example.mobiory.data.local.PrepopulateRoomCallback
 import com.example.mobiory.data.model.Event
@@ -12,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Database(entities = [Event::class], version = 1)
+@TypeConverters(DateTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun eventDao(): EventDao
     companion object {
