@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobiory.data.AppDatabase
+import com.example.mobiory.ui.screens.EventListScreen
 import com.example.mobiory.ui.theme.MobioryTheme
 import com.example.mobiory.ui.viewModel.EventListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,35 +69,8 @@ fun MainScreen() {
         Button(onClick = {
             AppDatabase.updatetDatabase(context)
         }) {
-            Text("Import Events")
+            Text("Refresh database")
         }
-
-        EventList()
-    }
-}
-
-@Composable
-fun EventList() {
-    val eventListViewModel = hiltViewModel<EventListViewModel>()
-    val events by eventListViewModel.eventList.collectAsState(initial = emptyList())
-
-    LazyColumn(contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        items(events) { event ->
-            EventItem(id = event.id, label = event.label?.labelEN ?:"")
-        }
-    }
-}
-
-@Composable
-fun EventItem(id : Int = 0, label : String = "") {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .background(Color.LightGray)) {
-        Text(modifier = Modifier.padding(8.dp), text = id.toString())
-        Text(modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(), text = label )
+        EventListScreen()
     }
 }

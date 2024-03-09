@@ -85,7 +85,7 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
             }
         }
 
-        val descriptionObj = eventObj.optString("label").split("||")
+        val descriptionObj = eventObj.optString("description").split("||")
         var descriptionEN :  String? = null
         var descriptionFR :  String? = null
         for (str in descriptionObj) {
