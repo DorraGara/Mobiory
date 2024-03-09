@@ -2,40 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "38d6210470bfcb3ac89b820867e53492",
+    "identityHash": "f920d8c5edf010a93308ed56dd21356d",
     "entities": [
       {
         "tableName": "events",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `label` TEXT NOT NULL, `aliases` TEXT NOT NULL, `description` TEXT NOT NULL, `wikipedia` TEXT NOT NULL, `startDate` TEXT, `endDate` TEXT, `en` INTEGER, `fr` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `startDate` TEXT, `endDate` TEXT, `PointInTime` TEXT, `labelEN` TEXT, `labelFR` TEXT, `descriptionEN` TEXT, `descriptionFR` TEXT, `wikipediaEN` TEXT, `wikipediaFRr` TEXT, `popularityEN` INTEGER, `popularityFR` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "label",
-            "columnName": "label",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "aliases",
-            "columnName": "aliases",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "description",
-            "columnName": "description",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "wikipedia",
-            "columnName": "wikipedia",
-            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -51,14 +27,56 @@
             "notNull": false
           },
           {
-            "fieldPath": "popularity.en",
-            "columnName": "en",
+            "fieldPath": "pointInTime",
+            "columnName": "PointInTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "label.labelEN",
+            "columnName": "labelEN",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "label.labelFR",
+            "columnName": "labelFR",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "description.descriptionEN",
+            "columnName": "descriptionEN",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "description.descriptionFR",
+            "columnName": "descriptionFR",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wikipedia.wikipediaEN",
+            "columnName": "wikipediaEN",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wikipedia.wikipediaFRr",
+            "columnName": "wikipediaFRr",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "popularity.popularityEN",
+            "columnName": "popularityEN",
             "affinity": "INTEGER",
             "notNull": false
           },
           {
-            "fieldPath": "popularity.fr",
-            "columnName": "fr",
+            "fieldPath": "popularity.popularityFR",
+            "columnName": "popularityFR",
             "affinity": "INTEGER",
             "notNull": false
           }
@@ -76,7 +94,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '38d6210470bfcb3ac89b820867e53492')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f920d8c5edf010a93308ed56dd21356d')"
     ]
   }
 }

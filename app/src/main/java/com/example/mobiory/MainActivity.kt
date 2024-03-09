@@ -83,7 +83,7 @@ fun EventList() {
     LazyColumn(contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(events) { event ->
-            EventItem(id = event.id, label = event.label)
+            EventItem(id = event.id, label = event.label?.labelEN ?:"")
         }
     }
 }

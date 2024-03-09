@@ -10,14 +10,14 @@ import java.util.Date
 data class Event(
     @PrimaryKey val id: Int,
 
-    @ColumnInfo(name = "label")
-    val label: String,
-    @ColumnInfo(name = "aliases")
-    val aliases: String,
-    @ColumnInfo(name = "description")
-    val description: String,
-    @ColumnInfo(name = "wikipedia")
-    val wikipedia: String,
+    @Embedded
+    val label: Label?,
+
+    @Embedded
+    val description: Description?,
+
+    @Embedded
+    val wikipedia: Wikipedia?,
 
     @Embedded
     val popularity: Popularity?,
@@ -26,11 +26,26 @@ data class Event(
     val startDate: Date?,
     @ColumnInfo(name = "endDate")
     val endDate: Date?,
+    @ColumnInfo(name = "PointInTime")
+    val pointInTime: Date?,
 )
 
 data class Popularity(
-    val en: Int,
-    val fr: Int
-) {
-    constructor() : this(-1, -1)
-}
+    val popularityEN: Int,
+    val popularityFR: Int
+)
+
+data class Label(
+    val labelEN: String?,
+    val labelFR: String?
+)
+
+data class Description(
+    val descriptionEN: String?,
+    val descriptionFR: String?
+)
+
+data class Wikipedia(
+    val wikipediaEN: String?,
+    val wikipediaFRr: String?
+)
