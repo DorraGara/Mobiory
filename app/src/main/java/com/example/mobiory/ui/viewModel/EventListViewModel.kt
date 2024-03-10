@@ -9,4 +9,5 @@ import javax.inject.Inject
 class EventListViewModel @Inject constructor (private val eventRepository: EventRepository) : ViewModel() {
 
     val eventList get() =  eventRepository.getAllEventsFlow()
+    
 }

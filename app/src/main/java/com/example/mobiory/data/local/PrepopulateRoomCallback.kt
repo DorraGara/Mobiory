@@ -14,7 +14,6 @@ import com.example.mobiory.data.model.Wikipedia
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONArray
 import org.json.JSONObject
 import java.util.Date
 
@@ -113,6 +112,7 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
         var startDate: Date? = null
         var endDate: Date? = null
         var pointInTime: Date? = null
+        var country: String? = null
 
         if (claimsListString != null) {
             for (i in 0 until claimsListString.length()) {
@@ -136,6 +136,12 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
                         pointInTime = DateTypeConverter().fromStringToDate(value.substringAfter("date:").trim())
 
                     }
+
+                    "fr:pays||en:country" -> {
+                        val value = claimObj.optString("value", "")
+                        country = value.substringAfter("en:").trim()
+
+                    }
                 }
             }
         }
@@ -150,7 +156,8 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
                 Popularity(popularityEN, popularityFR),
                 startDate,
                 endDate,
-                pointInTime
+                pointInTime,
+                country
             )
         }
     }

@@ -26,8 +26,12 @@ data class Event(
     val startDate: Date?,
     @ColumnInfo(name = "endDate")
     val endDate: Date?,
-    @ColumnInfo(name = "PointInTime")
+    @ColumnInfo(name = "pointInTime")
     val pointInTime: Date?,
+
+    @ColumnInfo(name = "country")
+    val country: String?,
+
 )
 
 data class Popularity(
