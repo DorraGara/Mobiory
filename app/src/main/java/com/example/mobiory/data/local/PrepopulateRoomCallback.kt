@@ -138,8 +138,8 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
                     }
 
                     "fr:pays||en:country" -> {
-                        val value = claimObj.optString("value", "")
-                        country = value.substringAfter("en:").trim()
+                        val value = claimObj.optJSONObject("item")?.optString("label")
+                        country = value?.substringAfter("en:")?.trim()
 
                     }
                 }

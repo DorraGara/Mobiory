@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -45,10 +46,11 @@ import java.util.Locale
 fun EventListScreen() {
     EventList()
 }
+
 @Composable
 fun EventItem(event: Event) {
 
-    var expanded by remember { mutableStateOf (false) }
+    var expanded by remember { mutableStateOf(false) }
 
     Card(
         shape = RoundedCornerShape(8.dp),
@@ -97,7 +99,7 @@ fun EventItem(event: Event) {
                 val progress = 1 - (popularity.popularityEN.toFloat() / 7000000f)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    ) {
+                ) {
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = "URL"
@@ -118,7 +120,7 @@ fun EventItem(event: Event) {
                         contentDescription = "URL"
                     )
                     Text(
-                        text = event.description?.descriptionEN?:"",
+                        text = event.description?.descriptionEN ?: "",
                         fontSize = 15.sp,
                         modifier = Modifier.padding(8.dp)
                     )
@@ -126,19 +128,33 @@ fun EventItem(event: Event) {
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "URL"
+                    )
+                    val dateShown = event.pointInTime ?: event.startDate ?: event.endDate
+                    Text(
+                        text = getDate(dateShown),
+                        fontSize = 15.sp,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+                event.country?.let {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "URL"
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = "Country"
                         )
-                        val dateShown = event.pointInTime ?: event.startDate ?: event.endDate
                         Text(
-                            text = getDate(dateShown),
+                            text = event.country,
                             fontSize = 15.sp,
                             modifier = Modifier.padding(8.dp)
                         )
                     }
-
+                }
             }
         }
     }
@@ -149,8 +165,10 @@ fun EventList() {
     val eventListViewModel = hiltViewModel<EventListViewModel>()
     val events by eventListViewModel.eventList.collectAsState(initial = emptyList())
 
-    LazyColumn(contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyColumn(
+        contentPadding = PaddingValues(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         items(events) { event ->
             EventItem(event = event)
         }
