@@ -12,23 +12,11 @@ import javax.inject.Inject
 
 class EventRepository @Inject constructor(private val eventDao: EventDao) {
 
-    // LiveData for the list of events
-    fun getAllEvents(): LiveData<List<Event>> {
-        return eventDao.getAllEvents()
-    }
-
     fun getAllEventsFlow(): Flow<List<Event>> {
         return eventDao.getAllEventsFlow()
     }
 
-    // Function to import events from a file
-    /*suspend fun importEventsFromTxt(file: File) {
-        withContext(Dispatchers.IO) {
-            // Code to read and parse the file, then insert events into the database
-            println("Contenu du fichier : ${file.name}")
-            val json = file.readText()
-            val events = Gson().fromJson(json, Array<Event>::class.java).toList()
-            eventDao.insertAll(events)
-        }
-    }*/
+    fun getSearchedEvents(searchString : String): Flow<List<Event>> {
+        return eventDao.searchEvents(searchString)
+    }
 }

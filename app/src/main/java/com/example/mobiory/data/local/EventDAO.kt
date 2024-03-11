@@ -24,6 +24,6 @@ interface EventDao {
 
     @Query("DELETE FROM events")
     fun deleteAll()
-
-
+    @Query("SELECT * FROM events WHERE labelEN LIKE '%' || :searchString || '%' OR labelFR LIKE '%' || :searchString || '%'")
+    fun searchEvents(searchString: String): Flow<List<Event>>
 }

@@ -32,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,10 +54,16 @@ import java.util.Locale
 @Composable
 fun EventListScreen() {
     val eventListViewModel = hiltViewModel<EventListViewModel>()
-    val events by eventListViewModel.eventList.collectAsState(initial = emptyList())
+    val eventsListInitial by eventListViewModel.eventList.collectAsState(initial = emptyList())
+
+    val (events,setEvents) = remember { mutableStateOf(eventsListInitial) }
+
+    LaunchedEffect(eventsListInitial) {
+         setEvents(eventsListInitial)
+    }
 
     Column {
-        SearchBar(eventListViewModel)
+        SearchBar(eventListViewModel,setEvents)
         EventList(events)
     }
 
@@ -93,7 +100,7 @@ fun EventItem(event: Event) {
 
             ) {
                 Text(
-                    text = event.label?.labelEN ?: "no label",
+                    text = event.label?.labelEN ?:  event.label?.labelFR ?: "no label",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -135,7 +142,7 @@ fun EventItem(event: Event) {
                         contentDescription = "URL"
                     )
                     Text(
-                        text = event.description?.descriptionEN ?: "",
+                        text = event.description?.descriptionEN ?: event.description?.descriptionEN ?: "",
                         fontSize = 15.sp,
                         modifier = Modifier.padding(8.dp)
                     )
@@ -195,23 +202,30 @@ fun getDate(date: Date?): String {
 
 @Composable
 fun SearchBar(
-    eventListViewModel: EventListViewModel
-) {
-    var (searchString,setSearchString) = remember { mutableStateOf("") }
+    eventListViewModel: EventListViewModel,
+    setEvents: (List<Event>) -> Unit
+    ) {
+    val (searchString,setSearchString) = remember { mutableStateOf("") }
+    val (searchClicked, setSearchClicked) = remember { mutableStateOf(false) }
+    val (filterOption,setfilterOption) = remember { mutableStateOf(FilterOption.OPTION_1) }
+    val (filterClicked, setFilterClicked) = remember { mutableStateOf(false) }
+    val (sortOption,setSortOption) = remember { mutableStateOf(SortOption.OPTION_A) }
+
+    val (sortClicked, setSortClicked) = remember { mutableStateOf(false) }
+
+
+    LaunchedEffect(searchClicked,searchString) {
+        if (searchClicked) {
+            eventListViewModel.getSearchedEvents(searchString).collect {
+                setEvents(it)
+                setSearchClicked(false)
+            }
+        }
+    }
+
     var expandedFilter by remember { mutableStateOf(false) }
     var expandedSort by remember { mutableStateOf(false) }
 
-    fun onSearch() {
-        // TODO
-    }
-
-    fun onFilter(filterOption: FilterOption) {
-
-    }
-
-    fun onSort(sortOption: SortOption) {
-
-    }
     Column {
         Row(
             modifier = Modifier
@@ -228,7 +242,7 @@ fun SearchBar(
                 //    .padding(end = 8.dp)
             )
 
-            IconButton(onClick = { onSearch()}) {
+            IconButton(onClick = { setSearchClicked(true)}) {
                 Icon(Icons.Default.Search, contentDescription = "Search")
             }
 
@@ -250,12 +264,13 @@ fun SearchBar(
                 onDismissRequest = { expandedFilter = false },
                 modifier = Modifier
                     .width(maxWidth/2),
-                offset = DpOffset(maxWidth /2,0.dp)
+                offset = DpOffset(maxWidth /2,0.dp),
 
             ) {
                 FilterOption.entries.forEach { option ->
                     DropdownMenuItem(text = { Text(option.label) }, onClick = {
-                        onFilter(option)
+                        setfilterOption(option)
+                        setFilterClicked(true)
                         expandedFilter = false
                     })
                 }
@@ -272,7 +287,8 @@ fun SearchBar(
             ) {
                 SortOption.entries.forEach { option ->
                     DropdownMenuItem(text = { Text(option.label) }, onClick = {
-                        onSort(option)
+                        setSortOption(option)
+                        setSortClicked(true)
                         expandedSort = false
                     })
                 }
