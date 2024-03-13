@@ -52,20 +52,14 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     val context = LocalContext.current
-    //val (isLoading,setIsLoading) = remember { mutableStateOf(false) }
 
     Column {
         Button(onClick = {
-            //setIsLoading(true)
             AppDatabase.updatetDatabase(context)
-            //setIsLoading(false)
         }) {
             Text("Refresh database")
         }
-        //if (isLoading)
-        //    CircularProgressIndicator(modifier = Modifier.width(64.dp))
-        //else {
-            EventListScreen()
-        //}
+        EventListScreen()
+
     }
 }

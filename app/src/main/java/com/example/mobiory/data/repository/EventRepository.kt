@@ -1,13 +1,8 @@
 package com.example.mobiory.data.repository
 
-import androidx.lifecycle.LiveData
 import com.example.mobiory.data.local.EventDao
 import com.example.mobiory.data.model.Event
-import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 
 class EventRepository @Inject constructor(private val eventDao: EventDao) {
@@ -18,5 +13,19 @@ class EventRepository @Inject constructor(private val eventDao: EventDao) {
 
     fun getSearchedEvents(searchString : String): Flow<List<Event>> {
         return eventDao.searchEvents(searchString)
+    }
+
+    fun getSortedEvents(option : String, order: String): Flow<List<Event>> {
+        return if (option == "popularity")
+            if (order == "asc")
+                eventDao.sortEventsPopularityASC()
+            else
+                eventDao.sortEventsPopularityDESC()
+        else
+            if (order == "asc")
+                eventDao.sortEventsDateASC()
+            else
+                eventDao.sortEventsDateDESC()
+
     }
 }

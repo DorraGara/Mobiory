@@ -1,5 +1,6 @@
 package com.example.mobiory.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+//import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -54,17 +56,23 @@ import java.util.Locale
 @Composable
 fun EventListScreen() {
     val eventListViewModel = hiltViewModel<EventListViewModel>()
+    //var isLoading by remember { mutableStateOf(true) }
     val eventsListInitial by eventListViewModel.eventList.collectAsState(initial = emptyList())
 
     val (events,setEvents) = remember { mutableStateOf(eventsListInitial) }
 
     LaunchedEffect(eventsListInitial) {
-         setEvents(eventsListInitial)
+        setEvents(eventsListInitial)
+        //isLoading = false
     }
 
     Column {
         SearchBar(eventListViewModel,setEvents)
-        EventList(events)
+        //if (isLoading)
+        //    CircularProgressIndicator(modifier = Modifier.width(64.dp))
+        //else {
+            EventList(events)
+        //}
     }
 
 }
@@ -222,6 +230,25 @@ fun SearchBar(
             }
         }
     }
+    LaunchedEffect(sortClicked,sortOption) {
+        if (sortClicked) {
+            val option = if (sortOption.label.contains("popularity")) {
+                "popularity"
+            } else {
+                "date"
+            }
+            val order = if (sortOption.label.contains("Highest") or (sortOption.label.contains("Oldest"))) {
+                "asc"
+            } else {
+                "desc"
+            }
+            eventListViewModel.getSortedEvents(option,order).collect {
+                setEvents(it)
+                Log.i("SearchBar: ", "SearchBar: $it")
+                setSearchClicked(false)
+            }
+        }
+    }
 
     var expandedFilter by remember { mutableStateOf(false) }
     var expandedSort by remember { mutableStateOf(false) }
@@ -304,8 +331,10 @@ enum class FilterOption(val label: String) {
 }
 
 enum class SortOption(val label: String) {
-    OPTION_A("Option A"),
-    OPTION_B("Option B"),
-    OPTION_C("Option C")
+    OPTION_A("Highest popularity"),
+    OPTION_B("Lowest popularity"),
+    OPTION_C("Most recent"),
+    OPTION_D("Oldest")
+
 }
 

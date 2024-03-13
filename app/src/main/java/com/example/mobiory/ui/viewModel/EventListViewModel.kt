@@ -15,4 +15,7 @@ class EventListViewModel @Inject constructor (private val eventRepository: Event
     fun getSearchedEvents(searchString: String): Flow<List<Event>> {
         return eventRepository.getSearchedEvents(searchString)
     }
+    fun getSortedEvents(option: String, order:String): Flow<List<Event>> {
+        return eventRepository.getSortedEvents(option, order)
+    }
 }
