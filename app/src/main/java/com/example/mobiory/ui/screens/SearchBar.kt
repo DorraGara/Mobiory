@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
@@ -36,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,6 +52,7 @@ import com.example.mobiory.data.model.Event
 import com.example.mobiory.ui.viewModel.EventListViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import kotlin.math.round
 
 
 @Composable
@@ -224,6 +227,8 @@ fun FilterMenu(
     val (searchString, setSearchString) = remember { mutableStateOf("") }
     val dateState = rememberDateRangePickerState()
     val openDateDialog = remember { mutableStateOf(false) }
+    val (startValue, setStartValue) = remember { mutableFloatStateOf(0f) }
+    val (endValue, setEndValue) = remember { mutableFloatStateOf(700000f) }
 
     Dialog(onDismissRequest = {
         onDismissRequest()
@@ -248,7 +253,8 @@ fun FilterMenu(
                     fontWeight = FontWeight.Bold,
 
                     )
-                Spacer(modifier = Modifier.height(25.dp))
+                PopularityRangePicker(startValue,setStartValue,endValue,setEndValue)
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Search by date range",
                     modifier = Modifier.padding(16.dp),
@@ -322,4 +328,37 @@ fun getFormattedDate(timeInMillis: Long): String {
     calender.timeInMillis = timeInMillis
     val dateFormat = SimpleDateFormat("dd/MM/yyyy")
     return dateFormat.format(calender.timeInMillis)
+}
+
+@Composable
+fun PopularityRangePicker(
+    startValue: Float,
+    setStartValue: (Float) -> Unit,
+    endValue: Float,
+    setEndValue: (Float) -> Unit,
+    ) {
+    var sliderPosition by remember { mutableStateOf(0f..700000f) }
+
+    Column(
+        modifier = Modifier.padding(horizontal = 16.dp)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Absolute.SpaceAround,
+            ) {
+            Text("Start: ${round(startValue)}")
+            Text("End: ${round(endValue)}")
+        }
+        RangeSlider(
+            value = sliderPosition,
+            steps = 10,
+            onValueChange = { range -> sliderPosition = range },
+            valueRange = 0f..700000f,
+            onValueChangeFinished = {
+                setStartValue(sliderPosition.start)
+                setEndValue(sliderPosition.endInclusive)
+
+            },
+        )
+    }
 }
