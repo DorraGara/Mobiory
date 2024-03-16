@@ -1,6 +1,5 @@
 package com.example.mobiory.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -40,7 +39,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,6 +53,7 @@ import com.example.mobiory.data.model.Event
 import com.example.mobiory.ui.viewModel.EventListViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 import kotlin.math.round
 
 
@@ -68,7 +67,7 @@ fun SearchBar(
     val (sortOption, setSortOption) = remember { mutableStateOf(SortOption.OPTION_A) }
 
     val (sortClicked, setSortClicked) = remember { mutableStateOf(false) }
-    var (expandedFilter,setExpandedFilter) = remember { mutableStateOf(false) }
+    val (expandedFilter,setExpandedFilter) = remember { mutableStateOf(false) }
     var expandedSort by remember { mutableStateOf(false) }
 
     LaunchedEffect(searchClicked, searchString) {
@@ -241,7 +240,7 @@ fun FilterMenu(
     LaunchedEffect(filterClicked, searchString,dateState.selectedStartDateMillis, dateState.selectedEndDateMillis, startPopularity,endPopularity) {
         if (filterClicked) {
 
-            //date either both null/both have value sinon error display 
+            //date either both null/both have value otherwise error display
             if (!((dateState.selectedStartDateMillis == null) xor (dateState.selectedEndDateMillis == null))){
                 eventListViewModel.getFilteredEvents(startPopularity, endPopularity, dateState.selectedStartDateMillis, dateState.selectedEndDateMillis, searchString).collect {
                     setEvents(it)
@@ -291,7 +290,7 @@ fun FilterMenu(
                 if (dateError) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "Start and end dates must be defined in the range",
+                        text = "Start and end dates must be defined.",
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -368,7 +367,7 @@ fun FilterMenu(
 fun getFormattedDate(timeInMillis: Long): String {
     val calender = Calendar.getInstance()
     calender.timeInMillis = timeInMillis
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale("FR"))
     return dateFormat.format(calender.timeInMillis)
 }
 
