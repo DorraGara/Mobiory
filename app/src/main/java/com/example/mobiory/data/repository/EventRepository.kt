@@ -28,4 +28,26 @@ class EventRepository @Inject constructor(private val eventDao: EventDao) {
                 eventDao.sortEventsDateDESC()
 
     }
+    fun getFilteredEventsDate(startPopularity:Int, endPopularity:Int, startDate: Long, endDate: Long , country:String): Flow<List<Event>>{
+        return if (country == "") {
+            if ((startPopularity == 0)  and  (endPopularity == 700000))
+                eventDao.searchByDateRange(startDate,endDate)
+            else eventDao.searchByDateAndPopularity(startDate,endDate, startPopularity,endPopularity)
+        } else {
+            if ((startPopularity == 0)  and  (endPopularity == 700000))
+                eventDao.searchByDateAndCountry(startDate,endDate,country)
+            else eventDao.searchByDateAndPopularityAndCountry(startDate,endDate,startPopularity,endPopularity,country)
+        }
+    }
+    fun getFilteredEvents(startPopularity:Int, endPopularity:Int, country:String): Flow<List<Event>> {
+        return if (country == "") {
+            if ((startPopularity == 0)  and  (endPopularity == 700000))
+                eventDao.getAllEventsFlow()
+            else eventDao.searchByPopularityRange(startPopularity,endPopularity)
+        } else {
+            if ((startPopularity == 0)  and  (endPopularity == 700000))
+                eventDao.searchByCountry(country)
+            else eventDao.searchByPopularityAndCountry(startPopularity,endPopularity,country)
+        }
+    }
 }

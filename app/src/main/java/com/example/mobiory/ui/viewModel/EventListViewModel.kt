@@ -18,4 +18,9 @@ class EventListViewModel @Inject constructor (private val eventRepository: Event
     fun getSortedEvents(option: String, order:String): Flow<List<Event>> {
         return eventRepository.getSortedEvents(option, order)
     }
+    fun getFilteredEvents(startPopularity:Float, endPopularity:Float, startDate: Long?, endDate: Long? , country:String): Flow<List<Event>> {
+        return if ((startDate != null) and (endDate != null))
+            eventRepository.getFilteredEventsDate(startPopularity.toInt(), endPopularity.toInt(), startDate!!,endDate!!, country)
+        else eventRepository.getFilteredEvents(startPopularity.toInt(), endPopularity.toInt(), country)
+    }
 }

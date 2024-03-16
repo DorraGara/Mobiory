@@ -1,5 +1,6 @@
 package com.example.mobiory.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RangeSlider
@@ -38,6 +40,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -65,7 +68,8 @@ fun SearchBar(
     val (sortOption, setSortOption) = remember { mutableStateOf(SortOption.OPTION_A) }
 
     val (sortClicked, setSortClicked) = remember { mutableStateOf(false) }
-
+    var (expandedFilter,setExpandedFilter) = remember { mutableStateOf(false) }
+    var expandedSort by remember { mutableStateOf(false) }
 
     LaunchedEffect(searchClicked, searchString) {
         if (searchClicked) {
@@ -95,9 +99,6 @@ fun SearchBar(
         }
     }
 
-    var expandedFilter by remember { mutableStateOf(false) }
-    var expandedSort by remember { mutableStateOf(false) }
-
     Column {
         Row(
             modifier = Modifier
@@ -116,7 +117,7 @@ fun SearchBar(
                 Icon(Icons.Default.Search, contentDescription = "Search")
             }
 
-            IconButton(onClick = { expandedFilter = true }) {
+            IconButton(onClick = { setExpandedFilter(true) }) {
                 Icon(Icons.Default.FilterAlt, contentDescription = "Filter")
             }
 
@@ -125,7 +126,10 @@ fun SearchBar(
             }
         }
         if (expandedFilter)
-            FilterMenu({ expandedFilter = false }, { expandedFilter = false })
+            FilterMenu(
+                setExpandedFilter,
+                eventListViewModel, setEvents
+            )
         BoxWithConstraints(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.TopEnd
@@ -171,6 +175,7 @@ fun DatePickerInDialog(
         DatePickerDialog(
             onDismissRequest = {
                 openDialog.value = false
+                state.setSelection(null,null)
             },
             confirmButton = {
                 TextButton(
@@ -221,17 +226,39 @@ fun DatePickerInDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterMenu(
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
+    setExpandedFilter: (Boolean) -> Unit,
+    eventListViewModel: EventListViewModel,
+    setEvents: (List<Event>) -> Unit
 ) {
     val (searchString, setSearchString) = remember { mutableStateOf("") }
     val dateState = rememberDateRangePickerState()
     val openDateDialog = remember { mutableStateOf(false) }
-    val (startValue, setStartValue) = remember { mutableFloatStateOf(0f) }
-    val (endValue, setEndValue) = remember { mutableFloatStateOf(700000f) }
+    val (startPopularity, setStartPopularity) = remember { mutableFloatStateOf(0f) }
+    val (endPopularity, setEndPopularity) = remember { mutableFloatStateOf(700000f) }
+    val (filterClicked, setFilterClicked) = remember { mutableStateOf(false) }
+    var dateError by remember { mutableStateOf(false) }
+
+    LaunchedEffect(filterClicked, searchString,dateState.selectedStartDateMillis, dateState.selectedEndDateMillis, startPopularity,endPopularity) {
+        if (filterClicked) {
+
+            //date either both null/both have value sinon error display 
+            if (!((dateState.selectedStartDateMillis == null) xor (dateState.selectedEndDateMillis == null))){
+                eventListViewModel.getFilteredEvents(startPopularity, endPopularity, dateState.selectedStartDateMillis, dateState.selectedEndDateMillis, searchString).collect {
+                    setEvents(it)
+                    dateError = false
+                    setExpandedFilter(false)
+                    setFilterClicked(false)
+                }
+            } else {
+                //setExpandedFilter(false)
+                dateError = true
+                setFilterClicked(false)
+            }
+        }
+    }
 
     Dialog(onDismissRequest = {
-        onDismissRequest()
+        setExpandedFilter(false)
     }) {
         Card(
             modifier = Modifier
@@ -253,7 +280,7 @@ fun FilterMenu(
                     fontWeight = FontWeight.Bold,
 
                     )
-                PopularityRangePicker(startValue,setStartValue,endValue,setEndValue)
+                PopularityRangePicker(startPopularity,setStartPopularity,endPopularity,setEndPopularity)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Search by date range",
@@ -261,12 +288,22 @@ fun FilterMenu(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                 )
+                if (dateError) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Start and end dates must be defined in the range",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Absolute.SpaceAround,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    OutlinedButton(onClick = { openDateDialog.value = true }) {
+                    OutlinedButton(onClick = {
+                        openDateDialog.value = true
+                        dateError = false
+                    }) {
                         if (dateState.selectedStartDateMillis != null)
                             dateState.selectedStartDateMillis?.let { getFormattedDate(it) }
                                 ?.let { Text(text = it) } ?: Text(text = "Start date")
@@ -277,7 +314,10 @@ fun FilterMenu(
                     Text(
                         text = "to",
                     )
-                    OutlinedButton(onClick = { openDateDialog.value = true }) {
+                    OutlinedButton(onClick = {
+                        openDateDialog.value = true
+                        dateError = false
+                    }) {
                         if (dateState.selectedEndDateMillis != null)
                             dateState.selectedEndDateMillis?.let { getFormattedDate(it) }
                                 ?.let { Text(text = it) }
@@ -307,13 +347,15 @@ fun FilterMenu(
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     TextButton(
-                        onClick = { onDismissRequest() },
+                        onClick = { setExpandedFilter(false) },
                         modifier = Modifier.padding(8.dp),
                     ) {
                         Text("Dismiss")
                     }
                     TextButton(
-                        onClick = { onConfirmation() },
+                        onClick = {
+                            setFilterClicked(true)
+                                  },
                         modifier = Modifier.padding(8.dp),
                     ) {
                         Text("Confirm")
@@ -357,7 +399,6 @@ fun PopularityRangePicker(
             onValueChangeFinished = {
                 setStartValue(sliderPosition.start)
                 setEndValue(sliderPosition.endInclusive)
-
             },
         )
     }

@@ -48,5 +48,25 @@ interface EventDao {
 
     fun sortEventsPopularityDESC(): Flow<List<Event>>
 
+    @Query("SELECT * FROM events WHERE country LIKE '%' || :country || '%'")
+    fun searchByCountry(country: String): Flow<List<Event>>
+
+    @Query("SELECT * FROM events WHERE startDate BETWEEN :startDate AND :endDate OR endDate BETWEEN :startDate AND :endDate OR pointInTime BETWEEN :startDate AND :endDate")
+    fun searchByDateRange(startDate: Long, endDate: Long): Flow<List<Event>>
+
+    @Query("SELECT * FROM events WHERE popularityEN BETWEEN :minPopularity AND :maxPopularity")
+    fun searchByPopularityRange(minPopularity: Int, maxPopularity: Int): Flow<List<Event>>
+
+    @Query("SELECT * FROM events WHERE (popularityEN BETWEEN :minPopularity AND :maxPopularity) AND (country LIKE '%' || :country || '%')")
+    fun searchByPopularityAndCountry(minPopularity: Int, maxPopularity: Int, country: String): Flow<List<Event>>
+
+    @Query("SELECT * FROM events WHERE ((startDate BETWEEN :startDate AND :endDate) OR (endDate BETWEEN :startDate AND :endDate) OR (pointInTime BETWEEN :startDate AND :endDate)) AND (country LIKE '%' || :country || '%')")
+    fun searchByDateAndCountry(startDate: Long, endDate: Long, country: String): Flow<List<Event>>
+
+    @Query("SELECT * FROM events WHERE ((startDate BETWEEN :startDate AND :endDate) OR (endDate BETWEEN :startDate AND :endDate) OR (pointInTime BETWEEN :startDate AND :endDate)) AND (popularityEN BETWEEN :minPopularity AND :maxPopularity)")
+    fun searchByDateAndPopularity(startDate: Long, endDate: Long, minPopularity: Int, maxPopularity: Int): Flow<List<Event>>
+
+    @Query("SELECT * FROM events WHERE ((startDate BETWEEN :startDate AND :endDate) OR (endDate BETWEEN :startDate AND :endDate) OR (pointInTime BETWEEN :startDate AND :endDate)) AND (popularityEN BETWEEN :minPopularity AND :maxPopularity) AND (country LIKE '%' || :country || '%')")
+    fun searchByDateAndPopularityAndCountry(startDate: Long, endDate: Long, minPopularity: Int, maxPopularity: Int, country: String): Flow<List<Event>>
 
 }
