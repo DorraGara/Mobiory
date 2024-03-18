@@ -69,4 +69,6 @@ interface EventDao {
     @Query("SELECT * FROM events WHERE ((startDate BETWEEN :startDate AND :endDate) OR (endDate BETWEEN :startDate AND :endDate) OR (pointInTime BETWEEN :startDate AND :endDate)) AND (popularityEN BETWEEN :minPopularity AND :maxPopularity) AND (country LIKE '%' || :country || '%')")
     fun searchByDateAndPopularityAndCountry(startDate: Long, endDate: Long, minPopularity: Int, maxPopularity: Int, country: String): Flow<List<Event>>
 
+    @Query("UPDATE events SET favorite = NOT favorite WHERE id = :eventId")
+    suspend fun toggleFavorite(eventId: Int)
 }

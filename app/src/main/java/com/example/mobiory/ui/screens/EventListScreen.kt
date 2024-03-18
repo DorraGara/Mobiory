@@ -42,6 +42,9 @@ import com.example.mobiory.ui.viewModel.EventListViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 
 @Composable
 fun EventListScreen() {
@@ -61,16 +64,24 @@ fun EventListScreen() {
         //if (isLoading)
         //    CircularProgressIndicator(modifier = Modifier.width(64.dp))
         //else {
-        EventList(events)
+        EventList(eventListViewModel, events)
         //}
     }
 
 }
 
 @Composable
-fun EventItem(event: Event) {
+fun EventItem(eventListViewModel: EventListViewModel, event: Event) {
 
     var expanded by remember { mutableStateOf(false) }
+    var onFavoriteClick by remember { mutableStateOf(false) }
+
+    LaunchedEffect(onFavoriteClick) {
+        if (onFavoriteClick) {
+            eventListViewModel.toggleFavorite(event.id)
+            onFavoriteClick = false
+        }
+    }
 
     Card(
         shape = RoundedCornerShape(8.dp),
@@ -105,15 +116,28 @@ fun EventItem(event: Event) {
                         .padding(8.dp)
                         .weight(1f)
                 )
-                IconButton(
-                    onClick = {
-                        expanded = !expanded
-                    }) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Drop-Down Arrow"
-                    )
-                }
+                +
+                Row() {
+                    IconButton(
+                                onClick = {
+                            onFavoriteClick = true
+                        }) {
+                        Icon(
+                                    imageVector = if (event.favorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = "Favorite"
+                        )
+                    }
+                    IconButton(
+                                onClick = {
+                            expanded = !expanded
+                        }) {
+                        Icon(
+                                    imageVector = Icons.Default.ArrowDropDown,
+                                    contentDescription = "Drop-Down Arrow"
+
+                        )
+
+                    }
             }
             event.popularity?.let { popularity ->
                 val progress = 1 - (popularity.popularityEN.toFloat() / 7000000f)
@@ -182,13 +206,14 @@ fun EventItem(event: Event) {
 }
 
 @Composable
-fun EventList(events: List<Event>) {
-    LazyColumn(
+fun EventList(eventListViewModel: EventListViewModel, events: List<Event>) {
+
+        LazyColumn(
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(events) { event ->
-            EventItem(event = event)
+            EventItem(eventListViewModel, event = event)
         }
     }
 }
