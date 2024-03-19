@@ -158,7 +158,8 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
                 endDate,
                 pointInTime,
                 country,
-                false
+                false,
+                ""
             )
         }
     }

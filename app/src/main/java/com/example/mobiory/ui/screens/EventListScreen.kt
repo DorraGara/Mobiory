@@ -45,6 +45,12 @@ import java.util.Locale
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Space
+import androidx.compose.material.icons.filled.Article
 
 @Composable
 fun EventListScreen() {
@@ -119,85 +125,87 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event) {
                 +
                 Row() {
                     IconButton(
-                                onClick = {
+                        onClick = {
                             onFavoriteClick = true
                         }) {
                         Icon(
-                                    imageVector = if (event.favorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                    contentDescription = "Favorite"
+                            imageVector = if (event.favorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorite"
                         )
                     }
                     IconButton(
-                                onClick = {
+                        onClick = {
                             expanded = !expanded
                         }) {
                         Icon(
-                                    imageVector = Icons.Default.ArrowDropDown,
-                                    contentDescription = "Drop-Down Arrow"
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Drop-Down Arrow"
 
                         )
 
                     }
-            }
-            event.popularity?.let { popularity ->
-                val progress = 1 - (popularity.popularityEN.toFloat() / 7000000f)
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "URL"
-                    )
-                    LinearProgressIndicator(
-                        progress = progress.coerceIn(0f, 1f),
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
                 }
-
-            }
-            if (expanded) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.List,
-                        contentDescription = "URL"
-                    )
-                    Text(
-                        text = event.description?.descriptionEN ?: event.description?.descriptionEN
-                        ?: "",
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = "URL"
-                    )
-                    val dateShown = event.pointInTime ?: event.startDate ?: event.endDate
-                    Text(
-                        text = getDate(dateShown),
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-                event.country?.let {
+                event.popularity?.let { popularity ->
+                    val progress = 1 - (popularity.popularityEN.toFloat() / 7000000f)
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = "Country"
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "URL"
+                        )
+                        LinearProgressIndicator(
+                            progress = progress.coerceIn(0f, 1f),
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                    }
+
+                }
+                if (expanded) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.List,
+                            contentDescription = "URL"
                         )
                         Text(
-                            text = event.country,
+                            text = event.description?.descriptionEN
+                                ?: event.description?.descriptionEN
+                                ?: "",
                             fontSize = 15.sp,
                             modifier = Modifier.padding(8.dp)
                         )
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = "URL"
+                        )
+                        val dateShown = event.pointInTime ?: event.startDate ?: event.endDate
+                        Text(
+                            text = getDate(dateShown),
+                            fontSize = 15.sp,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                    event.country?.let {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Country"
+                            )
+                            Text(
+                                text = event.country,
+                                fontSize = 15.sp,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -208,7 +216,7 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event) {
 @Composable
 fun EventList(eventListViewModel: EventListViewModel, events: List<Event>) {
 
-        LazyColumn(
+    LazyColumn(
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -223,3 +231,83 @@ fun getDate(date: Date?): String {
     return if (date != null) dateFormat.format(date).toString()
     else ""
 }
+
+@Composable
+fun TagDialog(
+    setExpandedDialog: (Boolean) -> Unit,
+    setUpdateTagClick: (Boolean) -> Unit,
+    setNewTag: (String) -> Unit,
+    tag: String
+) {
+    var localTag by remember { mutableStateOf(tag) }
+    Dialog(onDismissRequest = {
+        setExpandedDialog(false)
+    }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(210.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                OutlinedTextField(
+                    value = localTag,
+                    onValueChange = { localTag = it },
+                    label = { Text("Tag") },
+                    modifier = Modifier.width(250.dp)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    TextButton(
+                        onClick = { setExpandedDialog(false) },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        Text("Dismiss")
+                    }
+                    TextButton(
+                        onClick = {
+                            setNewTag(localTag)
+                            setUpdateTagClick(true)
+                        },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        Text("Confirm")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Tag(tag: String) {
+    Box(
+        modifier = Modifier
+            .height(22.dp)
+            .padding(5.dp, 0.dp)
+            .background(
+                shape = RoundedCornerShape(25.dp),
+                color = androidx.compose.ui.graphics.Color.Blue
+            ),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        Text(
+            modifier = Modifier.padding(15.dp, 0.dp),
+            text = tag,
+            style = TextStyle(
+                color = androidx.compose.ui.graphics.Color.White,
+            )
+        )
+    }
+}
+

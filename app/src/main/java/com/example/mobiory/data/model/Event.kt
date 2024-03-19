@@ -34,6 +34,8 @@ data class Event(
 
     val favorite: Boolean,
 
+    val tag: String
+
 )
 
 data class Popularity(

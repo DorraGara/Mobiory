@@ -26,4 +26,7 @@ class EventListViewModel @Inject constructor (private val eventRepository: Event
     suspend fun toggleFavorite(eventId: Int) {
         eventRepository.toggleFavorite(eventId)
     }
+    suspend fun updateTag(eventId: Int, label: String) {
+        eventRepository.updateTag(eventId, label)
+    }
 }
