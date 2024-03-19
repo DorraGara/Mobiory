@@ -34,7 +34,7 @@ data class Event(
 
     val favorite: Boolean,
 
-    val tag: String
+    val tag: String,
 
 )
 
