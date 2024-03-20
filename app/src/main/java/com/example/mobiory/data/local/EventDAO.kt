@@ -77,4 +77,9 @@ interface EventDao {
 
  */
 
+    @Query("UPDATE events SET favorite = NOT favorite WHERE id = :eventId")
+    suspend fun toggleFavorite(eventId: Int)
+
+    @Query("UPDATE events SET tag = :tag WHERE id = :eventId")
+    suspend fun updateTag(eventId: Int, tag: String)
 }

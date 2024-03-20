@@ -32,6 +32,10 @@ data class Event(
     @ColumnInfo(name = "country")
     val country: String?,
 
+    val favorite: Boolean,
+
+    val tag: String,
+
 )
 
 data class Popularity(

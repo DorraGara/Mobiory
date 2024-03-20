@@ -24,4 +24,10 @@ class EventListViewModel @Inject constructor (private val eventRepository: Event
             eventRepository.getFilteredEventsDate(startPopularity.toInt(), endPopularity.toInt(), Date(startDate!!),Date(endDate!!), country)
         else eventRepository.getFilteredEvents(startPopularity.toInt(), endPopularity.toInt(), country)
     }
+    suspend fun toggleFavorite(eventId: Int) {
+        eventRepository.toggleFavorite(eventId)
+    }
+    suspend fun updateTag(eventId: Int, label: String) {
+        eventRepository.updateTag(eventId, label)
+    }
 }

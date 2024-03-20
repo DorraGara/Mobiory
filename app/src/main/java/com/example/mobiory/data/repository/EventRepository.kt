@@ -51,4 +51,11 @@ class EventRepository @Inject constructor(private val eventDao: EventDao) {
             else eventDao.searchByPopularityAndCountry(startPopularity,endPopularity,country)
         }
     }
+    suspend fun toggleFavorite(eventId: Int) {
+        eventDao.toggleFavorite(eventId
+        )
+    }
+    suspend fun updateTag(eventId: Int, tag: String) {
+        eventDao.updateTag(eventId, tag)
+    }
 }
