@@ -105,6 +105,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx")
     implementation("androidx.lifecycle:lifecycle-runtime-compose")
 
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+
 }
 kapt {
     correctErrorTypes = true

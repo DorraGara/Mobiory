@@ -115,6 +115,26 @@ fun EventItem(event: Event) {
                     )
                 }
             }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = "URL"
+                )
+                if ((event.startDate != null) and (event.endDate != null))
+                    Text(
+                        text = getDate(event.startDate) + " to " + getDate(event.endDate),
+                        fontSize = 15.sp,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                else
+                    Text(
+                        text = getDate(event.pointInTime),
+                        fontSize = 15.sp,
+                        modifier = Modifier.padding(8.dp)
+                    )
+            }
             event.popularity?.let { popularity ->
                 val progress = 1 - (popularity.popularityEN.toFloat() / 7000000f)
                 Row(
@@ -142,21 +162,6 @@ fun EventItem(event: Event) {
                     Text(
                         text = event.description?.descriptionEN ?: event.description?.descriptionEN
                         ?: "",
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = "URL"
-                    )
-                    val dateShown = event.pointInTime ?: event.startDate ?: event.endDate
-                    Text(
-                        text = getDate(dateShown),
                         fontSize = 15.sp,
                         modifier = Modifier.padding(8.dp)
                     )
@@ -194,7 +199,7 @@ fun EventList(events: List<Event>) {
 }
 
 fun getDate(date: Date?): String {
-    val dateFormat = SimpleDateFormat("dd MM yyyy", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale("EN"))
     return if (date != null) dateFormat.format(date).toString()
     else ""
 }

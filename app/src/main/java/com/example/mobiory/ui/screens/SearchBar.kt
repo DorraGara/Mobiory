@@ -1,5 +1,6 @@
 package com.example.mobiory.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,7 @@ import com.example.mobiory.data.model.Event
 import com.example.mobiory.ui.viewModel.EventListViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import kotlin.math.round
 
@@ -198,7 +200,6 @@ fun DatePickerInDialog(
             DateRangePicker(
                 modifier = Modifier.weight(1f),
                 state = state,
-
                 title = {
                     DateRangePickerDefaults.DateRangePickerTitle(
                         state = state,
@@ -230,7 +231,9 @@ fun FilterMenu(
     setEvents: (List<Event>) -> Unit
 ) {
     val (searchString, setSearchString) = remember { mutableStateOf("") }
-    val dateState = rememberDateRangePickerState()
+    val dateState = rememberDateRangePickerState(
+        yearRange = IntRange(start = 0, endInclusive = 2400),
+    )
     val openDateDialog = remember { mutableStateOf(false) }
     val (startPopularity, setStartPopularity) = remember { mutableFloatStateOf(0f) }
     val (endPopularity, setEndPopularity) = remember { mutableFloatStateOf(700000f) }
@@ -367,7 +370,7 @@ fun FilterMenu(
 fun getFormattedDate(timeInMillis: Long): String {
     val calender = Calendar.getInstance()
     calender.timeInMillis = timeInMillis
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale("FR"))
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale("EN"))
     return dateFormat.format(calender.timeInMillis)
 }
 

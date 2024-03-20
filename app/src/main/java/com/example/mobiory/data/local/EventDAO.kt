@@ -5,8 +5,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.example.mobiory.data.model.Event
 import kotlinx.coroutines.flow.Flow
+import java.util.Date
 
 @Dao
 interface EventDao {
@@ -52,7 +54,7 @@ interface EventDao {
     fun searchByCountry(country: String): Flow<List<Event>>
 
     @Query("SELECT * FROM events WHERE startDate BETWEEN :startDate AND :endDate OR endDate BETWEEN :startDate AND :endDate OR pointInTime BETWEEN :startDate AND :endDate")
-    fun searchByDateRange(startDate: Long, endDate: Long): Flow<List<Event>>
+    fun searchByDateRange(startDate: Date, endDate: Date): Flow<List<Event>>
 
     @Query("SELECT * FROM events WHERE popularityEN BETWEEN :minPopularity AND :maxPopularity")
     fun searchByPopularityRange(minPopularity: Int, maxPopularity: Int): Flow<List<Event>>
@@ -61,12 +63,18 @@ interface EventDao {
     fun searchByPopularityAndCountry(minPopularity: Int, maxPopularity: Int, country: String): Flow<List<Event>>
 
     @Query("SELECT * FROM events WHERE ((startDate BETWEEN :startDate AND :endDate) OR (endDate BETWEEN :startDate AND :endDate) OR (pointInTime BETWEEN :startDate AND :endDate)) AND (country LIKE '%' || :country || '%')")
-    fun searchByDateAndCountry(startDate: Long, endDate: Long, country: String): Flow<List<Event>>
+    fun searchByDateAndCountry(startDate: Date, endDate: Date, country: String): Flow<List<Event>>
 
     @Query("SELECT * FROM events WHERE ((startDate BETWEEN :startDate AND :endDate) OR (endDate BETWEEN :startDate AND :endDate) OR (pointInTime BETWEEN :startDate AND :endDate)) AND (popularityEN BETWEEN :minPopularity AND :maxPopularity)")
-    fun searchByDateAndPopularity(startDate: Long, endDate: Long, minPopularity: Int, maxPopularity: Int): Flow<List<Event>>
+    fun searchByDateAndPopularity(startDate: Date, endDate: Date, minPopularity: Int, maxPopularity: Int): Flow<List<Event>>
 
     @Query("SELECT * FROM events WHERE ((startDate BETWEEN :startDate AND :endDate) OR (endDate BETWEEN :startDate AND :endDate) OR (pointInTime BETWEEN :startDate AND :endDate)) AND (popularityEN BETWEEN :minPopularity AND :maxPopularity) AND (country LIKE '%' || :country || '%')")
-    fun searchByDateAndPopularityAndCountry(startDate: Long, endDate: Long, minPopularity: Int, maxPopularity: Int, country: String): Flow<List<Event>>
+    fun searchByDateAndPopularityAndCountry(startDate: Date, endDate: Date, minPopularity: Int, maxPopularity: Int, country: String): Flow<List<Event>>
+
+/*
+    @Query("SELECT * FROM events WHERE id = :eventId")
+    fun getEventById(eventId: Int): Flow<Event?>
+
+ */
 
 }
