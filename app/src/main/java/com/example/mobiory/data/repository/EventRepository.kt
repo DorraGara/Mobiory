@@ -3,6 +3,7 @@ package com.example.mobiory.data.repository
 import com.example.mobiory.data.local.EventDao
 import com.example.mobiory.data.model.Event
 import kotlinx.coroutines.flow.Flow
+import java.util.Date
 import javax.inject.Inject
 
 class EventRepository @Inject constructor(private val eventDao: EventDao) {
@@ -28,7 +29,7 @@ class EventRepository @Inject constructor(private val eventDao: EventDao) {
                 eventDao.sortEventsDateDESC()
 
     }
-    fun getFilteredEventsDate(startPopularity:Int, endPopularity:Int, startDate: Long, endDate: Long , country:String): Flow<List<Event>>{
+    fun getFilteredEventsDate(startPopularity:Int, endPopularity:Int, startDate: Date, endDate: Date, country:String): Flow<List<Event>>{
         return if (country == "") {
             if ((startPopularity == 0)  and  (endPopularity == 700000))
                 eventDao.searchByDateRange(startDate,endDate)
@@ -56,5 +57,9 @@ class EventRepository @Inject constructor(private val eventDao: EventDao) {
     }
     suspend fun updateTag(eventId: Int, tag: String) {
         eventDao.updateTag(eventId, tag)
+    }
+
+    fun getFavoriteEvents(): Flow<List<Event>> {
+        return eventDao.getFavoriteEvents()
     }
 }
