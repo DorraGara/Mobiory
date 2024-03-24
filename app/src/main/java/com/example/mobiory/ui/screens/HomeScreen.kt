@@ -33,7 +33,7 @@ fun HomeScreen() {
             EventOfTheDay()
         }
         item {
-            // Add event proche //TODO
+            // Add event proches //TODO
         }
     }
 

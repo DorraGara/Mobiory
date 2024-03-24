@@ -1,6 +1,5 @@
 package com.example.mobiory.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -54,7 +53,6 @@ import com.example.mobiory.data.model.Event
 import com.example.mobiory.ui.viewModel.EventListViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import kotlin.math.round
 

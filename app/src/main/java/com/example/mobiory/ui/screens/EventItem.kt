@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.DateRange
@@ -104,7 +103,7 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
                         .padding(8.dp)
                         .weight(1f)
                 )
-                Row() {
+                Row {
                     IconButton(
                         onClick = {
                             onFavoriteClick = true
