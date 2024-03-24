@@ -133,29 +133,6 @@ fun Tag(tag: String) {
 }
 
 @Composable
-fun Tag(tag: String) {
-    Box(
-        modifier = Modifier
-            .height(22.dp)
-            .padding(5.dp, 0.dp)
-            .background(
-                shape = RoundedCornerShape(25.dp),
-                color = androidx.compose.ui.graphics.Color.Blue
-            ),
-        contentAlignment = Alignment.CenterStart,
-
-        ) {
-        Text(
-            modifier = Modifier.padding(15.dp, 0.dp),
-            text = tag,
-            style = TextStyle(
-                color = androidx.compose.ui.graphics.Color.White,
-            )
-        )
-    }
-}
-
-@Composable
 fun TagDialog(
     setExpandedDialog: (Boolean) -> Unit,
     setUpdateTagClick: (Boolean) -> Unit,
