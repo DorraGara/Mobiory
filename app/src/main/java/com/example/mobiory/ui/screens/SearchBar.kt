@@ -200,6 +200,7 @@ fun DatePickerInDialog(
             DateRangePicker(
                 modifier = Modifier.weight(1f),
                 state = state,
+                //Bug in 1 day range day picker in text field input mode
                 title = {
                     DateRangePickerDefaults.DateRangePickerTitle(
                         state = state,
@@ -242,7 +243,6 @@ fun FilterMenu(
 
     LaunchedEffect(filterClicked, searchString,dateState.selectedStartDateMillis, dateState.selectedEndDateMillis, startPopularity,endPopularity) {
         if (filterClicked) {
-
             //date either both null/both have value otherwise error display
             if (!((dateState.selectedStartDateMillis == null) xor (dateState.selectedEndDateMillis == null))){
                 eventListViewModel.getFilteredEvents(startPopularity, endPopularity, dateState.selectedStartDateMillis, dateState.selectedEndDateMillis, searchString).collect {
@@ -271,23 +271,29 @@ fun FilterMenu(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .padding(8.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "Search by popularity range",
+                    text = "Search filters",
                     modifier = Modifier.padding(16.dp),
-                    fontSize = 20.sp,
+                    fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-
+                )
+                Text(
+                    text = "Popularity rank",
+                    modifier = Modifier.padding(8.dp),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
                     )
                 PopularityRangePicker(startPopularity,setStartPopularity,endPopularity,setEndPopularity)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Search by date range",
-                    modifier = Modifier.padding(16.dp),
-                    fontSize = 20.sp,
+                    text = "Date",
+                    modifier = Modifier.padding(8.dp),
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                 )
                 if (dateError) {
@@ -331,9 +337,9 @@ fun FilterMenu(
                 Spacer(modifier = Modifier.height(25.dp))
 
                 Text(
-                    text = "Search by country",
-                    modifier = Modifier.padding(16.dp),
-                    fontSize = 20.sp,
+                    text = "Country",
+                    modifier = Modifier.padding(8.dp),
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                 )
                 OutlinedTextField(

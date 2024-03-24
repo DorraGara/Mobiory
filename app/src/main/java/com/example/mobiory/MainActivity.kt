@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ViewList
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -37,6 +39,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mobiory.data.AppDatabase
 import com.example.mobiory.ui.screens.EventListScreen
 import com.example.mobiory.ui.screens.HomeScreen
+import com.example.mobiory.ui.screens.SettingsScreen
 import com.example.mobiory.ui.theme.MobioryTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -57,8 +60,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MobioryTheme {
-                val context = LocalContext.current
-
                 val items = listOf(
                     BottomNavigationItem(
                         title = "Home",
@@ -74,6 +75,12 @@ class MainActivity : ComponentActivity() {
                         hasNews = false,
                     ),
                     //add Quiz and Frise chronologique here
+                    BottomNavigationItem(
+                        title = "Settings",
+                        selectedIcon = Icons.Filled.Settings,
+                        unselectedIcon = Icons.Outlined.Settings,
+                        hasNews = false,
+                    ),
                 )
                 var selectedItemIndex by rememberSaveable {
                     mutableStateOf(0)
@@ -125,15 +132,12 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .padding(innerPadding),
                         ) {
-                            Button(onClick = {
-                                AppDatabase.updatetDatabase(context)
-                            }) {
-                                Text("Refresh database")
-                            }
                             NavHost(navController = navController, startDestination = "home") {
                                 composable("Home") { HomeScreen() }
                                 composable("Event list") { EventListScreen() }
                                 //add rest of screen composable here (Quiz and frise)
+                                composable("Settings") { SettingsScreen() }
+
                             }
                         }
                     }
@@ -145,7 +149,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
-
 }
 
 data class BottomNavigationItem(

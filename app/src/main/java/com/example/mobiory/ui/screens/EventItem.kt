@@ -1,5 +1,6 @@
 package com.example.mobiory.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,12 +18,14 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -73,6 +77,7 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         ),
+        border = BorderStroke(1.dp, Color.Black),
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
@@ -83,6 +88,7 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(16.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -160,8 +166,9 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
             //set expected as parameter //TODO
 
             if (expanded or alwaysExpanded) {
-                val eventDescription = event.description?.descriptionEN ?: event.description?.descriptionEN
-                eventDescription?.let{
+                val eventDescription =
+                    event.description?.descriptionEN ?: event.description?.descriptionEN
+                eventDescription?.let {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -170,8 +177,9 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
                             contentDescription = "URL"
                         )
                         Text(
-                            text = event.description?.descriptionEN ?: event.description?.descriptionEN
-                            ?: "",
+                            text = event.description?.descriptionEN
+                                ?: event.description?.descriptionEN
+                                ?: "",
                             fontSize = 15.sp,
                             modifier = Modifier.padding(8.dp)
                         )
@@ -196,23 +204,14 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Absolute.SpaceBetween,
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Article,
-                        contentDescription = "Tag"
-                    )
                     if (event.tag != "") {
+
+                        Icon(
+                            imageVector = Icons.Default.Article,
+                            contentDescription = "Tag"
+                        )
                         Tag(tag = event.tag)
                     }
-                    IconButton(
-                        onClick = {
-                            setShowTagDialog(true)
-                        }) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add tag"
-                        )
-                    }
-                    //add button add tag and button see more //TODO
                     if (showTagDialog)
                         TagDialog(
                             setExpandedDialog = setShowTagDialog,
@@ -220,6 +219,24 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
                             setNewTag = setNewTag,
                             tag = event.tag
                         )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Absolute.SpaceEvenly,
+                ) {
+                    OutlinedButton(onClick = {
+                        setShowTagDialog(true)
+                    }) {
+                        Text(if (event.tag == "") "Add Tag" else "Update Tag")
+                    }
+                    Button(onClick = {
+                        //TODO: Go to event details
+                    }) {
+                        Text("See more")
+                    }
                 }
             }
         }

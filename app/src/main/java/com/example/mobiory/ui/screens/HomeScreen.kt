@@ -62,7 +62,6 @@ fun EventOfTheDay() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(
             text = "Event of the day",
             style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 24.sp),
