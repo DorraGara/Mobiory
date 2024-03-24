@@ -30,8 +30,14 @@ class EventListViewModel @Inject constructor (private val eventRepository: Event
     suspend fun updateTag(eventId: Int, label: String) {
         eventRepository.updateTag(eventId, label)
     }
-
     fun getFavoriteEvents(): Flow<List<Event>> {
         return eventRepository.getFavoriteEvents()
+    }
+
+    fun getRandomEventForToday(today: Date): Flow<Event?> {
+        return eventRepository.getRandomEventForToday(today)
+    }
+    fun getRandomEventForMonth(today: Date): Flow<Event?> {
+        return eventRepository.getRandomEventForMonth(today)
     }
 }

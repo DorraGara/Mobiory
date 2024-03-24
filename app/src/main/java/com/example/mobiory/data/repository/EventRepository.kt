@@ -62,4 +62,11 @@ class EventRepository @Inject constructor(private val eventDao: EventDao) {
     fun getFavoriteEvents(): Flow<List<Event>> {
         return eventDao.getFavoriteEvents()
     }
+
+    fun getRandomEventForToday(today: Date): Flow<Event?> {
+        return eventDao.getRandomEventForToday(today)
+    }
+    fun getRandomEventForMonth(today: Date): Flow<Event?> {
+        return eventDao.getRandomEventForMonth(today)
+    }
 }

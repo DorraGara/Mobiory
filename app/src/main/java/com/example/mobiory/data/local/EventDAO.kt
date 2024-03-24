@@ -83,4 +83,10 @@ interface EventDao {
 
     @Query("SELECT * FROM events WHERE favorite = 1")
     fun getFavoriteEvents(): Flow<List<Event>>
+
+    @Query("SELECT * FROM events WHERE (strftime('%m-%d', startDate) = strftime('%m-%d', :today)) OR (strftime('%m-%d', pointInTime) = strftime('%m-%d', :today)) LIMIT 1")
+    fun getRandomEventForToday(today: Date): Flow<Event?>
+
+    @Query("SELECT * FROM events WHERE (strftime('%m', startDate) = strftime('%m', :today)) OR (strftime('%m-%d', pointInTime) = strftime('%m-%d', :today)) ORDER BY RANDOM() LIMIT 1")
+    fun getRandomEventForMonth(today: Date): Flow<Event?>
 }
