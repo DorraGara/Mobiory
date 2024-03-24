@@ -42,7 +42,7 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun EventItem(eventListViewModel: EventListViewModel, event: Event) {
+fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpanded: Boolean) {
 
     var expanded by remember { mutableStateOf(false) }
     var onFavoriteClick by remember { mutableStateOf(false) }
@@ -108,15 +108,16 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event) {
                             contentDescription = "Favorite"
                         )
                     }
-                    IconButton(
-                        onClick = {
-                            expanded = !expanded
-                        }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = "Drop-Down Arrow"
-                        )
-                    }
+                    if (!alwaysExpanded)
+                        IconButton(
+                            onClick = {
+                                expanded = !expanded
+                            }) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = "Drop-Down Arrow"
+                            )
+                        }
                 }
             }
             Row(
@@ -156,7 +157,9 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event) {
                 }
 
             }
-            if (expanded) {
+            //set expected as parameter //TODO
+
+            if (expanded or alwaysExpanded) {
                 val eventDescription = event.description?.descriptionEN ?: event.description?.descriptionEN
                 eventDescription?.let{
                     Row(
@@ -209,6 +212,7 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event) {
                             contentDescription = "Add tag"
                         )
                     }
+                    //add button add tag and button see more //TODO
                     if (showTagDialog)
                         TagDialog(
                             setExpandedDialog = setShowTagDialog,

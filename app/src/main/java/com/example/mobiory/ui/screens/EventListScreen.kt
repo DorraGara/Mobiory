@@ -104,7 +104,7 @@ fun EventList(eventListViewModel: EventListViewModel, events: List<Event>) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(events) { event ->
-            EventItem(eventListViewModel, event = event)
+            EventItem(eventListViewModel, event = event, alwaysExpanded = false)
         }
     }
 }
