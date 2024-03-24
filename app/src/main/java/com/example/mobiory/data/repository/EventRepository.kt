@@ -58,4 +58,15 @@ class EventRepository @Inject constructor(private val eventDao: EventDao) {
     suspend fun updateTag(eventId: Int, tag: String) {
         eventDao.updateTag(eventId, tag)
     }
+
+    fun getFavoriteEvents(): Flow<List<Event>> {
+        return eventDao.getFavoriteEvents()
+    }
+
+    fun getRandomEventForToday(today: Date): Flow<Event?> {
+        return eventDao.getRandomEventForToday(today)
+    }
+    fun getRandomEventForMonth(today: Date): Flow<Event?> {
+        return eventDao.getRandomEventForMonth(today)
+    }
 }

@@ -41,13 +41,11 @@ interface EventDao {
 
     //@Query("SELECT * FROM events ORDER BY CASE WHEN popularityEN IS NULL THEN popularityFR END ASC")
     @Query("SELECT * FROM events ORDER BY popularityEN ASC")
-
     fun sortEventsPopularityASC(): Flow<List<Event>>
 
     //@Query("SELECT * FROM events ORDER BY CASE WHEN popularityEN IS NULL THEN popularityFR END DESC")
 
     @Query("SELECT * FROM events ORDER BY popularityEN DESC")
-
     fun sortEventsPopularityDESC(): Flow<List<Event>>
 
     @Query("SELECT * FROM events WHERE country LIKE '%' || :country || '%'")
@@ -71,15 +69,24 @@ interface EventDao {
     @Query("SELECT * FROM events WHERE ((startDate BETWEEN :startDate AND :endDate) OR (endDate BETWEEN :startDate AND :endDate) OR (pointInTime BETWEEN :startDate AND :endDate)) AND (popularityEN BETWEEN :minPopularity AND :maxPopularity) AND (country LIKE '%' || :country || '%')")
     fun searchByDateAndPopularityAndCountry(startDate: Date, endDate: Date, minPopularity: Int, maxPopularity: Int, country: String): Flow<List<Event>>
 
-/*
-    @Query("SELECT * FROM events WHERE id = :eventId")
-    fun getEventById(eventId: Int): Flow<Event?>
+    /*
+        @Query("SELECT * FROM events WHERE id = :eventId")
+        fun getEventById(eventId: Int): Flow<Event?>
 
- */
+     */
 
     @Query("UPDATE events SET favorite = NOT favorite WHERE id = :eventId")
     suspend fun toggleFavorite(eventId: Int)
 
     @Query("UPDATE events SET tag = :tag WHERE id = :eventId")
     suspend fun updateTag(eventId: Int, tag: String)
+
+    @Query("SELECT * FROM events WHERE favorite = 1")
+    fun getFavoriteEvents(): Flow<List<Event>>
+
+    @Query("SELECT * FROM events WHERE (strftime('%m-%d', startDate) = strftime('%m-%d', :today)) OR (strftime('%m-%d', pointInTime) = strftime('%m-%d', :today)) LIMIT 1")
+    fun getRandomEventForToday(today: Date): Flow<Event?>
+
+    @Query("SELECT * FROM events WHERE (strftime('%m', startDate) = strftime('%m', :today)) OR (strftime('%m-%d', pointInTime) = strftime('%m-%d', :today)) ORDER BY RANDOM() LIMIT 1")
+    fun getRandomEventForMonth(today: Date): Flow<Event?>
 }

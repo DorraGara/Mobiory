@@ -31,8 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.mobiory.data.AppDatabase
 import com.example.mobiory.ui.screens.EventListScreen
+import com.example.mobiory.ui.screens.HomeScreen
 import com.example.mobiory.ui.theme.MobioryTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -53,6 +57,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MobioryTheme {
+                val context = LocalContext.current
+
                 val items = listOf(
                     BottomNavigationItem(
                         title = "Home",
@@ -72,6 +78,9 @@ class MainActivity : ComponentActivity() {
                 var selectedItemIndex by rememberSaveable {
                     mutableStateOf(0)
                 }
+
+                val navController = rememberNavController()
+
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -85,7 +94,7 @@ class MainActivity : ComponentActivity() {
                                         selected = selectedItemIndex == index,
                                         onClick = {
                                             selectedItemIndex = index
-                                            // navController.navigate(item.title)
+                                            navController.navigate(item.title)
                                         },
                                         label = {
                                             Text(text = item.title)
@@ -116,7 +125,16 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .padding(innerPadding),
                         ) {
-                            MainScreen()
+                            Button(onClick = {
+                                AppDatabase.updatetDatabase(context)
+                            }) {
+                                Text("Refresh database")
+                            }
+                            NavHost(navController = navController, startDestination = "home") {
+                                composable("Home") { HomeScreen() }
+                                composable("Event list") { EventListScreen() }
+                                //add rest of screen composable here (Quiz and frise)
+                            }
                         }
                     }
                 }
@@ -127,17 +145,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
-    val context = LocalContext.current
 
-    Column {
-        Button(onClick = {
-            AppDatabase.updatetDatabase(context)
-        }) {
-            Text("Refresh database")
-        }
-        EventListScreen()
-
-    }
 }
 
 data class BottomNavigationItem(
