@@ -105,6 +105,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx")
     implementation("androidx.lifecycle:lifecycle-runtime-compose")
 
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("com.google.accompanist:accompanist-permissions:0.30.0")
+
+
+
 }
 kapt {
     correctErrorTypes = true

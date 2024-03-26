@@ -1,19 +1,22 @@
 package com.example.mobiory
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ViewList
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,19 +27,20 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.mobiory.data.AppDatabase
 import com.example.mobiory.ui.screens.EventListScreen
 import com.example.mobiory.ui.screens.HomeScreen
+import com.example.mobiory.ui.screens.SettingsScreen
 import com.example.mobiory.ui.theme.MobioryTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -52,20 +56,19 @@ fun MainScreenPreview() {
 @AndroidEntryPoint
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             MobioryTheme {
-                val context = LocalContext.current
-
+                val (homeNotifications, setHomeNotifications) = remember { mutableStateOf(false) }
                 val items = listOf(
                     BottomNavigationItem(
                         title = "Home",
                         selectedIcon = Icons.Filled.Home,
                         unselectedIcon = Icons.Outlined.Home,
-                        //for notifications
-                        hasNews = true,
+                        hasNews = homeNotifications,
                     ),
                     BottomNavigationItem(
                         title = "Event list",
@@ -74,9 +77,15 @@ class MainActivity : ComponentActivity() {
                         hasNews = false,
                     ),
                     //add Quiz and Frise chronologique here
+                    BottomNavigationItem(
+                        title = "Settings",
+                        selectedIcon = Icons.Filled.Settings,
+                        unselectedIcon = Icons.Outlined.Settings,
+                        hasNews = false,
+                    ),
                 )
                 var selectedItemIndex by rememberSaveable {
-                    mutableStateOf(0)
+                    mutableIntStateOf(0)
                 }
 
                 val navController = rememberNavController()
@@ -95,6 +104,8 @@ class MainActivity : ComponentActivity() {
                                         onClick = {
                                             selectedItemIndex = index
                                             navController.navigate(item.title)
+                                            if (selectedItemIndex == 0)
+                                                setHomeNotifications(false)
                                         },
                                         label = {
                                             Text(text = item.title)
@@ -125,15 +136,12 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .padding(innerPadding),
                         ) {
-                            Button(onClick = {
-                                AppDatabase.updatetDatabase(context)
-                            }) {
-                                Text("Refresh database")
-                            }
                             NavHost(navController = navController, startDestination = "home") {
-                                composable("Home") { HomeScreen() }
+                                composable("Home") { HomeScreen(setHomeNotifications) }
                                 composable("Event list") { EventListScreen() }
                                 //add rest of screen composable here (Quiz and frise)
+                                composable("Settings") { SettingsScreen() }
+
                             }
                         }
                     }
@@ -145,7 +153,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
-
 }
 
 data class BottomNavigationItem(
