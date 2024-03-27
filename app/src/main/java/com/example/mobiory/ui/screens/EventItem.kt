@@ -39,11 +39,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.mobiory.data.article.Article
 import com.example.mobiory.data.model.Event
-import com.example.mobiory.ui.viewModel.ArticleViewModel
 import com.example.mobiory.ui.viewModel.EventListViewModel
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
@@ -282,10 +280,5 @@ NavHost(navController = navController, startDestination = Routes.Home.route) {
         //ArticleScreen(title = "title" ,text = "text", bitmap = null)
     }
 }*/
-sealed class Routes(val route: String) {
-    data object Home : Routes("home")
-    data object Event : Routes("event list")
-    data object Article : Routes("article")
-}
 
 
