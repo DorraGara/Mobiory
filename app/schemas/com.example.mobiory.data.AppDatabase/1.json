@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "713852137695ac6511f4bdbd9225f591",
+    "identityHash": "9ffb749fb7e81376c3d62e2c06582078",
     "entities": [
       {
         "tableName": "events",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `startDate` TEXT, `endDate` TEXT, `pointInTime` TEXT, `country` TEXT, `favorite` INTEGER NOT NULL, `tag` TEXT NOT NULL, `labelEN` TEXT, `labelFR` TEXT, `descriptionEN` TEXT, `descriptionFR` TEXT, `wikipediaEN` TEXT, `wikipediaFRr` TEXT, `popularityEN` INTEGER, `popularityFR` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `startDate` TEXT, `endDate` TEXT, `pointInTime` TEXT, `country` TEXT, `coordinates` TEXT, `favorite` INTEGER NOT NULL, `tag` TEXT NOT NULL, `labelEN` TEXT, `labelFR` TEXT, `descriptionEN` TEXT, `descriptionFR` TEXT, `wikipediaEN` TEXT, `wikipediaFRr` TEXT, `popularityEN` INTEGER, `popularityFR` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -35,6 +35,12 @@
           {
             "fieldPath": "country",
             "columnName": "country",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "coordinates",
+            "columnName": "coordinates",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -112,7 +118,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '713852137695ac6511f4bdbd9225f591')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9ffb749fb7e81376c3d62e2c06582078')"
     ]
   }
 }

@@ -203,12 +203,27 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
                         )
                     }
                 }
+                //TODO To erase @Zack
+                event.coordinates?.let {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = "Country"
+                        )
+                        Text(
+                            text = event.coordinates,
+                            fontSize = 15.sp,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Absolute.SpaceBetween,
                 ) {
                     if (event.tag != "") {
-
                         Icon(
                             imageVector = Icons.Default.Article,
                             contentDescription = "Tag"

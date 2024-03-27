@@ -113,6 +113,7 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
         var endDate: Date? = null
         var pointInTime: Date? = null
         var country: String? = null
+        var coordinates: String? = null
 
         if (claimsListString != null) {
             for (i in 0 until claimsListString.length()) {
@@ -140,6 +141,22 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
                     "fr:pays||en:country" -> {
                         val value = claimObj.optJSONObject("item")?.optString("label")
                         country = value?.substringAfter("en:")?.trim()
+                        val countryClaimsListString = eventObj.optJSONArray("claims")
+                        if (countryClaimsListString != null) {
+                            for (j in 0 until countryClaimsListString.length()) {
+                                val claimObjCountry = countryClaimsListString.getJSONObject(i)
+                                val verboseNameCountry = claimObjCountry.optString("verboseName", "")
+                                if (verboseNameCountry == "fr:coordonnées géographiques||en:coordinate location") {
+                                    val valueCoordinates = claimObj.optString("value", "")
+                                    coordinates = valueCoordinates.substringAfter("geo:").trim()
+                                }
+                            }
+                        }
+                    }
+
+                    "fr:coordonnées géographiques||en:coordinate location" -> {
+                        val value = claimObj.optString("value", "")
+                        coordinates = value.substringAfter("geo:").trim()
 
                     }
                 }
@@ -158,6 +175,7 @@ class PrepopulateRoomCallback(private val context: Context) : RoomDatabase.Callb
                 endDate,
                 pointInTime,
                 country,
+                coordinates,
                 false,
                 ""
             )

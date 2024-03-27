@@ -32,6 +32,9 @@ data class Event(
     @ColumnInfo(name = "country")
     val country: String?,
 
+    @ColumnInfo(name = "coordinates")
+    val coordinates: String?,
+
     val favorite: Boolean,
 
     val tag: String,
