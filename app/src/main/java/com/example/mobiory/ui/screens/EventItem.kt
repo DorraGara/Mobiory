@@ -1,5 +1,7 @@
 package com.example.mobiory.ui.screens
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,14 +40,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.mobiory.data.article.Article
 import com.example.mobiory.data.model.Event
+import com.example.mobiory.ui.viewModel.ArticleViewModel
 import com.example.mobiory.ui.viewModel.EventListViewModel
+import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @Composable
-fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpanded: Boolean) {
+fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpanded: Boolean , navigator : NavHostController , context: Context) {
 
     var expanded by remember { mutableStateOf(false) }
     var onFavoriteClick by remember { mutableStateOf(false) }
@@ -53,6 +63,22 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
     var (updateTagClick, setUpdateTagClick) = remember { mutableStateOf(false) }
     val (newTag, setNewTag) = remember { mutableStateOf(event.tag) }
 
+    val viewModel: ArticleViewModel = hiltViewModel<ArticleViewModel>()
+    /*val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = Routes.Home.route) {
+
+        composable(Routes.Home.route) {
+            HomeScreen()
+        }
+
+        composable(Routes.Event.route) {
+            EventListScreen()
+        }
+
+        composable(Routes.Article.route) {
+            //ArticleScreen(title = "title" ,text = "text", bitmap = null)
+        }
+    }*/
 
     LaunchedEffect(onFavoriteClick) {
         if (onFavoriteClick) {
@@ -224,7 +250,7 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
                         .fillMaxWidth()
                         .padding(top = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Absolute.SpaceEvenly,
+                    horizontalArrangement = Arrangement.Absolute.SpaceBetween,
                 ) {
                     OutlinedButton(onClick = {
                         setShowTagDialog(true)
@@ -235,6 +261,18 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
                         //TODO: Go to event details
                     }) {
                         Text("See more")
+                    }
+                    Button(onClick = {
+                        val text2 = event.label?.labelEN ?: event.label?.labelFR ?: "no label"
+                        val encodedEventName = URLEncoder.encode(text2, "UTF-8")
+
+                        val textApiUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=$encodedEventName&formatversion=2"
+                        val imageApiUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&titles=$encodedEventName&formatversion=2&pithumbsize=500"
+
+                        val article = Article()
+                        article.getArticle(textApiUrl,imageApiUrl,navigator, context)
+                    }) {
+                        Text("Article")
                     }
                 }
             }
@@ -247,3 +285,27 @@ fun getDate(date: Date?): String {
     return if (date != null) dateFormat.format(date).toString()
     else ""
 }
+
+
+/*val navController = rememberNavController()
+NavHost(navController = navController, startDestination = Routes.Home.route) {
+
+    composable(Routes.Home.route) {
+        HomeScreen()
+    }
+
+    composable(Routes.Event.route) {
+        EventListScreen()
+    }
+
+    composable(Routes.Article.route) {
+        //ArticleScreen(title = "title" ,text = "text", bitmap = null)
+    }
+}*/
+sealed class Routes(val route: String) {
+    data object Home : Routes("home")
+    data object Event : Routes("event list")
+    data object Article : Routes("article")
+}
+
+

@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mobiory.ui.screens.ArticleScreen
 import com.example.mobiory.ui.screens.EventListScreen
 import com.example.mobiory.ui.screens.HomeScreen
 import com.example.mobiory.ui.screens.SettingsScreen
@@ -53,7 +54,9 @@ fun MainScreenPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
 
         setContent {
             MobioryTheme {
@@ -84,6 +87,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 val navController = rememberNavController()
+
 
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -130,10 +134,11 @@ class MainActivity : ComponentActivity() {
                                 .padding(innerPadding),
                         ) {
                             NavHost(navController = navController, startDestination = "home") {
-                                composable("Home") { HomeScreen() }
-                                composable("Event list") { EventListScreen() }
+                                composable(Routes.Home.route) { HomeScreen(navController,this@MainActivity) }
+                                composable(Routes.Event.route) { EventListScreen(navController,this@MainActivity) }
                                 //add rest of screen composable here (Quiz and frise)
-                                composable("Settings") { SettingsScreen() }
+                                composable(Routes.Settings.route) { SettingsScreen() }
+                                composable(Routes.Article.route) { ArticleScreen() }
 
                             }
                         }
@@ -154,3 +159,11 @@ data class BottomNavigationItem(
     val unselectedIcon: ImageVector,
     val hasNews: Boolean,
 )
+
+
+sealed class Routes(val route: String) {
+    data object Home : Routes("Home")
+    data object Event : Routes("Event List")
+    data object Settings : Routes("Settings")
+    data object Article : Routes("Article")
+}

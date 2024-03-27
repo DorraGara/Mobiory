@@ -1,5 +1,6 @@
 package com.example.mobiory.ui.screens
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,11 +38,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.mobiory.data.model.Event
 import com.example.mobiory.ui.viewModel.EventListViewModel
 
 @Composable
-fun EventListScreen() {
+fun EventListScreen(navigator : NavHostController,context : Context) {
     val eventListViewModel = hiltViewModel<EventListViewModel>()
     //var isLoading by remember { mutableStateOf(true) }
     val eventsListInitial by eventListViewModel.eventList.collectAsState(initial = emptyList())
@@ -91,7 +93,7 @@ fun EventListScreen() {
                 //if (isLoading)
                 //    CircularProgressIndicator(modifier = Modifier.width(64.dp))
                 //else {
-                EventList(eventListViewModel, events)
+                EventList(eventListViewModel, events,navigator,context)
                 //}
             }
         }
@@ -99,13 +101,13 @@ fun EventListScreen() {
 }
 
 @Composable
-fun EventList(eventListViewModel: EventListViewModel, events: List<Event>) {
+fun EventList(eventListViewModel: EventListViewModel, events: List<Event> , navigator : NavHostController , context: Context) {
     LazyColumn(
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(events) { event ->
-            EventItem(eventListViewModel, event = event, alwaysExpanded = false)
+            EventItem(eventListViewModel, event = event, alwaysExpanded = false , navigator,context)
         }
     }
 }

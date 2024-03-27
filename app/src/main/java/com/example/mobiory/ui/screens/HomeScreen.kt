@@ -1,5 +1,6 @@
 package com.example.mobiory.ui.screens
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,19 +20,20 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.mobiory.data.model.Event
 import com.example.mobiory.ui.viewModel.EventListViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import java.util.Date
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navigator : NavHostController , context : Context) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
     ) {
         item {
-            EventOfTheDay()
+            EventOfTheDay(navigator ,context)
         }
         item {
             // Add event proches //TODO
@@ -41,7 +43,7 @@ fun HomeScreen() {
 }
 
 @Composable
-fun EventOfTheDay() {
+fun EventOfTheDay(navigator : NavHostController, context: Context) {
     val eventListViewModel = hiltViewModel<EventListViewModel>()
     val today = remember { Date() }
     val (event, setEvent) = remember(today) {
@@ -72,7 +74,7 @@ fun EventOfTheDay() {
             modifier = Modifier.padding(bottom = 16.dp)
         )
         if (event != null) {
-            EventItem(eventListViewModel = eventListViewModel, event = event, alwaysExpanded = true)
+            EventItem(eventListViewModel = eventListViewModel, event = event, alwaysExpanded = true  , navigator,context)
         }
 
     }
