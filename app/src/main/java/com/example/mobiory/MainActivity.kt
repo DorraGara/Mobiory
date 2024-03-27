@@ -1,8 +1,10 @@
 package com.example.mobiory
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,7 +27,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -53,6 +57,7 @@ fun MainScreenPreview() {
 @AndroidEntryPoint
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -60,13 +65,13 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MobioryTheme {
+                val (homeNotifications, setHomeNotifications) = remember { mutableStateOf(false) }
                 val items = listOf(
                     BottomNavigationItem(
                         title = "Home",
                         selectedIcon = Icons.Filled.Home,
                         unselectedIcon = Icons.Outlined.Home,
-                        //for notifications
-                        hasNews = true,
+                        hasNews = homeNotifications,
                     ),
                     BottomNavigationItem(
                         title = "Event list",
@@ -83,7 +88,7 @@ class MainActivity : ComponentActivity() {
                     ),
                 )
                 var selectedItemIndex by rememberSaveable {
-                    mutableStateOf(0)
+                    mutableIntStateOf(0)
                 }
 
                 val navController = rememberNavController()
@@ -103,6 +108,8 @@ class MainActivity : ComponentActivity() {
                                         onClick = {
                                             selectedItemIndex = index
                                             navController.navigate(item.title)
+                                            if (selectedItemIndex == 0)
+                                                setHomeNotifications(false)
                                         },
                                         label = {
                                             Text(text = item.title)
@@ -134,12 +141,11 @@ class MainActivity : ComponentActivity() {
                                 .padding(innerPadding),
                         ) {
                             NavHost(navController = navController, startDestination = "home") {
-                                composable(Routes.Home.route) { HomeScreen(navController,this@MainActivity) }
-                                composable(Routes.Event.route) { EventListScreen(navController,this@MainActivity) }
+                                composable("Home") { HomeScreen(setHomeNotifications) }
+                                composable("Event list") { EventListScreen() }
                                 //add rest of screen composable here (Quiz and frise)
-                                composable(Routes.Settings.route) { SettingsScreen() }
+                                composable("Settings") { SettingsScreen() }
                                 composable(Routes.Article.route) { ArticleScreen() }
-
                             }
                         }
                     }

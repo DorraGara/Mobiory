@@ -1,5 +1,8 @@
 package com.example.mobiory.ui.viewModel
 
+import android.annotation.SuppressLint
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import com.example.mobiory.data.model.Event
 import com.example.mobiory.data.repository.EventRepository
@@ -9,7 +12,11 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class EventListViewModel @Inject constructor (private val eventRepository: EventRepository) : ViewModel() {
+class EventListViewModel @Inject constructor (
+    private val eventRepository: EventRepository,
+    private val notificationBuilder: NotificationCompat.Builder,
+    private val notificationManager: NotificationManagerCompat
+) : ViewModel() {
 
     val eventList get() =  eventRepository.getAllEventsFlow()
 
@@ -39,5 +46,12 @@ class EventListViewModel @Inject constructor (private val eventRepository: Event
     }
     fun getRandomEventForMonth(today: Date): Flow<Event?> {
         return eventRepository.getRandomEventForMonth(today)
+    }
+    @SuppressLint("MissingPermission")
+    fun showSimpleNotification(event:Event) {
+        notificationManager.notify(1, notificationBuilder
+            .setContentTitle("Event of the day")
+            .setContentText(event.label?.labelEN)
+            .build())
     }
 }
