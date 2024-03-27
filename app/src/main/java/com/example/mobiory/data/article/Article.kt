@@ -8,7 +8,7 @@ import androidx.navigation.NavHostController
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.example.mobiory.ui.screens.Routes
+import com.example.mobiory.Routes
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.InputStream
@@ -96,11 +96,6 @@ class Article() : ApiResponseListener{
     override fun onResponseError(errorMsg: String) {
         Log.e("Article", errorMsg)
     }
-
-
-
-
-
 
     private fun handleTextApiResponse(response: JSONObject): Pair<String, String> {
         val query = response.getJSONObject("query")

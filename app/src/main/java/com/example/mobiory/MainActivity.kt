@@ -34,6 +34,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -65,6 +66,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MobioryTheme {
+                val context = LocalContext.current
                 val (homeNotifications, setHomeNotifications) = remember { mutableStateOf(false) }
                 val items = listOf(
                     BottomNavigationItem(
@@ -141,10 +143,10 @@ class MainActivity : ComponentActivity() {
                                 .padding(innerPadding),
                         ) {
                             NavHost(navController = navController, startDestination = "home") {
-                                composable("Home") { HomeScreen(setHomeNotifications) }
-                                composable("Event list") { EventListScreen() }
+                                composable(Routes.Home.route) { HomeScreen(navController, context, setHomeNotifications) }
+                                composable(Routes.Event.route) { EventListScreen(navController,context) }
                                 //add rest of screen composable here (Quiz and frise)
-                                composable("Settings") { SettingsScreen() }
+                                composable(Routes.Settings.route) { SettingsScreen() }
                                 composable(Routes.Article.route) { ArticleScreen() }
                             }
                         }

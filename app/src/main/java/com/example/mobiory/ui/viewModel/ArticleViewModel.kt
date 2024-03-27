@@ -4,8 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.graphics.Bitmap
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ArticleViewModel : ViewModel() {
+@HiltViewModel
+class ArticleViewModel  @Inject constructor(): ViewModel() {
     private val _articleTitle = MutableLiveData<String>()
     val articleTitle: LiveData<String> = _articleTitle
 
