@@ -1,6 +1,5 @@
 package com.example.mobiory.ui.screens
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,9 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mobiory.ui.viewModel.ArticleViewModel
-import com.example.mobiory.ui.viewModel.EventListViewModel
 
 @Composable
 fun ArticleScreen() {

@@ -86,10 +86,10 @@ class Article() : ApiResponseListener{
 
 
     override fun onResponseSuccess(navigator: NavHostController) {
-        if (textRequestDone && imageRequestDone) {
+        /*if (textRequestDone && imageRequestDone) {
             // Update article properties
             //articleViewModel.setArticleData(articleTitle, articleText, articleImageBitmap)
-        }
+        }*/
         navigator.navigate(Routes.Article.route)
     }
 

@@ -59,22 +59,6 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
     var (updateTagClick, setUpdateTagClick) = remember { mutableStateOf(false) }
     val (newTag, setNewTag) = remember { mutableStateOf(event.tag) }
 
-    val viewModel: ArticleViewModel = hiltViewModel<ArticleViewModel>()
-    /*val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Routes.Home.route) {
-
-        composable(Routes.Home.route) {
-            HomeScreen()
-        }
-
-        composable(Routes.Event.route) {
-            EventListScreen()
-        }
-
-        composable(Routes.Article.route) {
-            //ArticleScreen(title = "title" ,text = "text", bitmap = null)
-        }
-    }*/
 
     LaunchedEffect(onFavoriteClick) {
         if (onFavoriteClick) {
