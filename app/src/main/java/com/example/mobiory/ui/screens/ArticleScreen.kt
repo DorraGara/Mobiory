@@ -5,13 +5,12 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,49 +28,54 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ArticleScreen(title:String, text:String,bitmap: Bitmap?) {
-    Log.e("screen","we here")
+fun ArticleScreen(title: String, text: String, bitmap: Bitmap?) {
+    Log.e("screen", "we here")
 
-    Column(modifier = Modifier.fillMaxSize()) {
-           if (bitmap != null) {
-               Image(
-                   painter = BitmapPainter(bitmap.asImageBitmap()),
-                   contentDescription = null,
-                   contentScale = ContentScale.FillWidth,
-                   modifier = Modifier.fillMaxWidth()
-               )
-           }else {
-               // Placeholder or error image
-               Text(
-                   text = "Image not available",
-                   textAlign = TextAlign.Center,
-                   modifier = Modifier
-                       .padding(16.dp)
-                       .fillMaxWidth()
-               )
-           }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+    ) {
+        bitmap?.let {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Image(
+                    painter = BitmapPainter(it.asImageBitmap()),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        } ?: run {
+            Text(
+                text = "Image not available",
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
+            )
+        }
 
         Surface(
-            color = Color.Black.copy(alpha = 0.6f),
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
+            modifier = Modifier.fillMaxWidth()
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(16.dp)
             ) {
                 Text(
                     text = title,
                     color = Color.White,
                     style = TextStyle(
-                        textDecoration = TextDecoration.Underline,
-                        fontWeight = FontWeight.Bold, fontSize = 24.sp
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp
                     ),
                     textAlign = TextAlign.Center,
-                    fontSize = 24.sp
+                    modifier = Modifier.padding(vertical = 8.dp)
                 )
+
                 Text(
                     text = text,
                     color = Color.White,
@@ -82,5 +86,3 @@ fun ArticleScreen(title:String, text:String,bitmap: Bitmap?) {
         }
     }
 }
-
-

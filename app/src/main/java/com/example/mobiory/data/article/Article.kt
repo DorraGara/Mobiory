@@ -2,15 +2,9 @@ package com.example.mobiory.data.article
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
-import androidx.compose.ui.text.substring
-import androidx.core.graphics.get
 import androidx.navigation.NavHostController
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
 import com.example.mobiory.Routes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -81,12 +75,6 @@ class Article() : ApiResponseListener{
 
   data class Page(val title:String,val text:String,val image:ByteArray?)
 
-    fun bitmapToString(bitmap: Bitmap): String {
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-        return Base64.encodeToString(byteArray, Base64.DEFAULT)
-    }
 
     override fun onResponseSuccess(navigator: NavHostController) {
         //val bitmap = this.articleImageBitmap?.let { bitmapToString(it) }

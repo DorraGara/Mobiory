@@ -42,7 +42,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.mobiory.data.article.Article
 import com.example.mobiory.ui.screens.ArticleScreen
 import com.example.mobiory.ui.screens.EventListScreen
 import com.example.mobiory.ui.screens.HomeScreen
@@ -213,10 +212,6 @@ sealed class Routes(val route: String) {
     data object Event : Routes("Event List")
     data object Settings : Routes("Settings")
     data object Article : Routes("Article")
-}
-fun stringToBitmap(encodedString: String): Bitmap? {
-    val decodedBytes = Base64.decode(encodedString, Base64.DEFAULT)
-    return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
 }
 
 
