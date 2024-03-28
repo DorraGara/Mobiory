@@ -1,5 +1,9 @@
 package com.example.mobiory.ui.screens
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,38 +21,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.mobiory.ui.viewModel.ArticleViewModel
 
 @Composable
-fun ArticleScreen() {
+fun ArticleScreen(title:String, text:String,bitmap: Bitmap?) {
+    Log.e("screen","we here")
 
-    val viewModel: ArticleViewModel = hiltViewModel<ArticleViewModel>()
-
-    val title = viewModel.articleTitle.value
-    val text = viewModel.articleText.value
-    val bitmap = viewModel.articleImageBitmap.value?.asImageBitmap()
     Column(modifier = Modifier.fillMaxSize()) {
-        if (bitmap != null) {
-            Image(
-                painter = BitmapPainter(bitmap),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier.fillMaxWidth()
-            )
-        } else {
-            // Placeholder or error image
-            Text(
-                text = "Image not available",
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-            )
-        }
+           if (bitmap != null) {
+               Image(
+                   painter = BitmapPainter(bitmap.asImageBitmap()),
+                   contentDescription = null,
+                   contentScale = ContentScale.FillWidth,
+                   modifier = Modifier.fillMaxWidth()
+               )
+           }else {
+               // Placeholder or error image
+               Text(
+                   text = "Image not available",
+                   textAlign = TextAlign.Center,
+                   modifier = Modifier
+                       .padding(16.dp)
+                       .fillMaxWidth()
+               )
+           }
+
         Surface(
             color = Color.Black.copy(alpha = 0.6f),
             modifier = Modifier
@@ -60,22 +62,22 @@ fun ArticleScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                if (title != null) {
-                    Text(
-                        text = title,
-                        color = Color.Black,
-                        textAlign = TextAlign.Center,
-                        fontSize = 24.sp
-                    )
-                }
-                if (text != null) {
-                    Text(
-                        text = text,
-                        color = Color.Black,
-                        textAlign = TextAlign.Start,
-                        fontSize = 16.sp
-                    )
-                }
+                Text(
+                    text = title,
+                    color = Color.White,
+                    style = TextStyle(
+                        textDecoration = TextDecoration.Underline,
+                        fontWeight = FontWeight.Bold, fontSize = 24.sp
+                    ),
+                    textAlign = TextAlign.Center,
+                    fontSize = 24.sp
+                )
+                Text(
+                    text = text,
+                    color = Color.White,
+                    textAlign = TextAlign.Start,
+                    fontSize = 16.sp
+                )
             }
         }
     }

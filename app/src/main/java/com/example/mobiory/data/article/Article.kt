@@ -3,98 +3,109 @@ package com.example.mobiory.data.article
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Base64
 import android.util.Log
+import androidx.compose.ui.text.substring
+import androidx.core.graphics.get
 import androidx.navigation.NavHostController
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.mobiory.Routes
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
 interface  ApiResponseListener{
     fun onResponseSuccess(navigator: NavHostController)
-    fun onResponseError(errorMsg: String)
+    fun onResponseError(navigator: NavHostController)
 }
 
 
 class Article() : ApiResponseListener{
     private var articleTitle: String = ""
     private var articleText: String = ""
-    private var articleImageBitmap: Bitmap? = null
+    private var articleImageBitmap: ByteArray? = null
     private var textRequestDone: Boolean = false
     private var imageRequestDone: Boolean = false
 
 
-    fun getArticle(textApiUrl: String, imageApiUrl: String, navigator: NavHostController, context: Context)
-    {
-
-
-        // Request for text content
-        val textRequest = JsonObjectRequest(
-            Request.Method.GET, textApiUrl, null,
-            { response ->
-                try {
-                    val (title, text) = handleTextApiResponse(response)
-                    this.articleTitle = title
-                    this.articleText = text
-
-                    // Log the text after updating the property
-                    Log.e("Text Success", articleText)
-                    textRequestDone = true
-                        onResponseSuccess(navigator)
-
-                } catch (e: JSONException) {
-                    Log.e("Text Error", e.message ?: "Unknown error")
+    fun getArticle(textApiUrl: String, imageApiUrl: String, navigator: NavHostController, context: Context) {
+        val outerThis = this
+        GlobalScope.launch(Dispatchers.Main) { // Launch a coroutine in the main thread
+            try {
+                // Request for text content
+                val textResponse = withContext(Dispatchers.IO) {
+                    makeTextRequest(textApiUrl)
                 }
-            },
-            { error ->
-                Log.e("Text Request Error", error.message ?: "Unknown error")
-            })
 
-        // Request for image content
-        val imageRequest = JsonObjectRequest(
-            Request.Method.GET, imageApiUrl, null,
-            { response ->
-                try {
-                    val bitmap = handleImageApiResponse(response)
-                    this.articleImageBitmap = bitmap
+                val (title, text) = handleTextApiResponse(textResponse)
+                outerThis.articleTitle = title
+                outerThis.articleText = text
+
+                // Log the text after updating the property
+                Log.e("Text Success", articleText)
+                textRequestDone = true
+
+                // Request for image content
+                val imageResponse = withContext(Dispatchers.IO) {
+                    makeImageRequest(imageApiUrl)
+                }
+
+                val bitmap = handleImageApiResponse(imageResponse)
+                if (bitmap != null) {
+                    outerThis.articleImageBitmap = bitmap
 
                     // Log the success
                     Log.e("Image Success", "Image loaded successfully")
+                    //Log.e("test", (outerThis.articleImageBitmap != null).toString())
                     imageRequestDone = true
                     onResponseSuccess(navigator)
-
-                    // Now, navigate or perform any other action requiring article data
-
-                } catch (e: JSONException) {
-                    Log.e("Image Error", e.message ?: "Unknown error")
                 }
-            },
-            { error ->
-                Log.e("Image Request Error", error.message ?: "Unknown error")
-            })
-
-        // Add both requests to the request queue
-        val requestQueue = Volley.newRequestQueue(context)
-        requestQueue.add(textRequest)
-        requestQueue.add(imageRequest)
+            } catch (e: Exception) {
+                Log.e("Error", e.message ?: "Unknown error")
+                onResponseError(navigator)
+            }
+        }
     }
 
+
+  data class Page(val title:String,val text:String,val image:ByteArray?)
+
+    fun bitmapToString(bitmap: Bitmap): String {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
+    }
 
     override fun onResponseSuccess(navigator: NavHostController) {
-        /*if (textRequestDone && imageRequestDone) {
-            // Update article properties
-            //articleViewModel.setArticleData(articleTitle, articleText, articleImageBitmap)
-        }*/
-        navigator.navigate(Routes.Article.route)
+        //val bitmap = this.articleImageBitmap?.let { bitmapToString(it) }
+        if (textRequestDone && imageRequestDone) {
+            val page =  Page(this.articleTitle, this.articleText,this.articleImageBitmap)
+            navigator.currentBackStackEntry?.savedStateHandle?.apply {
+                set("page_title", page.title)
+                set("page_text", page.text)
+               set("page_image", page.image)
+
+            }
+            navigator.navigate(Routes.Article.route)
+        }
+
     }
 
-    override fun onResponseError(errorMsg: String) {
-        Log.e("Article", errorMsg)
+
+    override fun onResponseError(navigator: NavHostController) {
+        navigator.navigate(Routes.Home.route)
     }
 
     private fun handleTextApiResponse(response: JSONObject): Pair<String, String> {
@@ -111,7 +122,7 @@ class Article() : ApiResponseListener{
         }
     }
 
-    private fun handleImageApiResponse(response: JSONObject): Bitmap? {
+    private suspend fun handleImageApiResponse(response: JSONObject): ByteArray? {
         val query = response.getJSONObject("query")
         val pages = query.getJSONArray("pages")
         if (pages.length() > 0) {
@@ -125,18 +136,48 @@ class Article() : ApiResponseListener{
         return null
     }
 
-    private fun loadImage(imageUrl: String): Bitmap? {
-        return try {
-            val url = URL(imageUrl)
-            val connection = url.openConnection() as HttpURLConnection
-            connection.doInput = true
-            connection.connect()
-            val inputStream: InputStream = connection.inputStream
-            BitmapFactory.decodeStream(inputStream)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+    suspend fun loadImage(imageUrl: String): ByteArray? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val url = URL(imageUrl)
+                val connection = url.openConnection() as? HttpURLConnection
+                connection?.doInput = true
+                connection?.connect()
+                val inputStream: InputStream? = connection?.inputStream
+                inputStream?.readBytes()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
+    }
+    private suspend fun makeHttpRequest(urlString: String): String {
+        return withContext(Dispatchers.IO) {
+            val url = URL(urlString)
+            val connection = url.openConnection() as HttpURLConnection
+            try {
+                val reader = BufferedReader(InputStreamReader(connection.inputStream))
+                val response = StringBuilder()
+                var line: String?
+                while (reader.readLine().also { line = it } != null) {
+                    response.append(line)
+                }
+                reader.close()
+                response.toString()
+            } finally {
+                connection.disconnect()
+            }
+        }
+    }
+
+    suspend fun makeTextRequest(textApiUrl: String): JSONObject {
+        val response = makeHttpRequest(textApiUrl)
+        return JSONObject(response)
+    }
+
+    suspend fun makeImageRequest(imageApiUrl: String): JSONObject {
+        val response = makeHttpRequest(imageApiUrl)
+        return JSONObject(response)
     }
 }
 

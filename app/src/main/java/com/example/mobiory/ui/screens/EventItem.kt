@@ -1,6 +1,7 @@
 package com.example.mobiory.ui.screens
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -251,16 +252,17 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
                         Text(if (event.tag == "") "Add Tag" else "Update Tag")
                     }
                     Button(onClick = {
-                        //TODO: Go to event details
-                    }) {
-                        Text("See more")
-                    }
-                    Button(onClick = {
                         val text2 = event.label?.labelEN ?: event.label?.labelFR ?: "no label"
+
                         val encodedEventName = URLEncoder.encode(text2, "UTF-8")
 
                         val textApiUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=$encodedEventName&formatversion=2"
-                        val imageApiUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&titles=$encodedEventName&formatversion=2&pithumbsize=500"
+                        val imageApiUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&titles=$encodedEventName&formatversion=2&pithumbsize=250"
+
+
+
+                        Log.e("image url",imageApiUrl)
+                        Log.e("text url",textApiUrl)
 
                         val article = Article()
                         article.getArticle(textApiUrl,imageApiUrl,navigator, context)

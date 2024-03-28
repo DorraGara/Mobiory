@@ -1,7 +1,10 @@
 package com.example.mobiory
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.util.Base64
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -39,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mobiory.data.article.Article
 import com.example.mobiory.ui.screens.ArticleScreen
 import com.example.mobiory.ui.screens.EventListScreen
 import com.example.mobiory.ui.screens.HomeScreen
@@ -143,11 +147,46 @@ class MainActivity : ComponentActivity() {
                                 .padding(innerPadding),
                         ) {
                             NavHost(navController = navController, startDestination = "home") {
-                                composable(Routes.Home.route) { HomeScreen(navController, context, setHomeNotifications) }
-                                composable(Routes.Event.route) { EventListScreen(navController,context) }
+                                composable(Routes.Home.route) {
+                                    HomeScreen(
+                                        navController,
+                                        context,
+                                        setHomeNotifications
+                                    )
+                                }
+                                composable(Routes.Event.route) {
+                                    EventListScreen(
+                                        navController,
+                                        context
+                                    )
+                                }
                                 //add rest of screen composable here (Quiz and frise)
                                 composable(Routes.Settings.route) { SettingsScreen() }
-                                composable(Routes.Article.route) { ArticleScreen() }
+                                composable(Routes.Article.route) {
+                                    val pageTitle =
+                                        navController.previousBackStackEntry?.savedStateHandle?.get<String>(
+                                            "page_title"
+                                        )
+                                    val pageText =
+                                        navController.previousBackStackEntry?.savedStateHandle?.get<String>(
+                                            "page_text"
+                                        )
+                                    val pageImage =
+                                        navController.previousBackStackEntry?.savedStateHandle?.get<ByteArray>(
+                                            "page_image"
+                                        )
+                                    //val pageImage = navController.previousBackStackEntry?.savedStateHandle?.get<Bitmap>("page_image")
+                                    val bitmap = pageImage?.let { it1 ->
+                                        BitmapFactory.decodeByteArray(pageImage,0,
+                                            it1.size)
+                                    }
+                                    if (pageTitle != null && pageText != null) {
+
+
+                                            ArticleScreen(pageTitle, pageText,bitmap)
+
+                                    }
+                                }
                             }
                         }
                     }
@@ -175,3 +214,9 @@ sealed class Routes(val route: String) {
     data object Settings : Routes("Settings")
     data object Article : Routes("Article")
 }
+fun stringToBitmap(encodedString: String): Bitmap? {
+    val decodedBytes = Base64.decode(encodedString, Base64.DEFAULT)
+    return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+}
+
+
