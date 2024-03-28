@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.mobiory.R
 
 
+
 class QuizScreen : AppCompatActivity() {
 
     private lateinit var questions: List<Question>
