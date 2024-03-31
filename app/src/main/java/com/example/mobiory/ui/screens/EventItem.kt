@@ -1,7 +1,9 @@
 package com.example.mobiory.ui.screens
 
+import android.app.AlertDialog
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -265,7 +267,11 @@ fun EventItem(eventListViewModel: EventListViewModel, event: Event, alwaysExpand
                         Log.e("text url",textApiUrl)
 
                         val article = Article()
-                        article.getArticle(textApiUrl,imageApiUrl,navigator, context)
+                        article.getArticle(textApiUrl, imageApiUrl, navigator, context) { isArticleAvailable ->
+                            if (!isArticleAvailable) {
+                                Toast.makeText(context, "Article not available", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }) {
                         Text("Article")
                     }

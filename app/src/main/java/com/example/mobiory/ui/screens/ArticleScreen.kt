@@ -2,6 +2,7 @@ package com.example.mobiory.ui.screens
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.text.Spanned
 import android.util.Base64
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -20,15 +21,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.HtmlCompat
 
 @Composable
 fun ArticleScreen(title: String, text: String, bitmap: Bitmap?) {
+
+    val parsedText: Spanned = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+    val annotatedString = AnnotatedString.Builder()
+        .apply {
+            append(parsedText)
+        }
+        .toAnnotatedString()
     Log.e("screen", "we here")
 
     Column(
@@ -76,13 +87,17 @@ fun ArticleScreen(title: String, text: String, bitmap: Bitmap?) {
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
 
+
                 Text(
-                    text = text,
+                    text = annotatedString,
                     color = Color.White,
-                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth(),
                     fontSize = 16.sp
                 )
             }
         }
     }
 }
+
+
+

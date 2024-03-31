@@ -174,7 +174,6 @@ class MainActivity : ComponentActivity() {
                                         navController.previousBackStackEntry?.savedStateHandle?.get<ByteArray>(
                                             "page_image"
                                         )
-                                    //val pageImage = navController.previousBackStackEntry?.savedStateHandle?.get<Bitmap>("page_image")
                                     val bitmap = pageImage?.let { it1 ->
                                         BitmapFactory.decodeByteArray(pageImage,0,
                                             it1.size)

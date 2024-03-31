@@ -1,5 +1,6 @@
 package com.example.mobiory.data.article
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Base64
@@ -21,7 +22,7 @@ import java.net.URL
 
 interface  ApiResponseListener{
     fun onResponseSuccess(navigator: NavHostController)
-    fun onResponseError(navigator: NavHostController)
+    fun onResponseError(navigator: NavHostController,context: Context)
 }
 
 
@@ -33,7 +34,13 @@ class Article() : ApiResponseListener{
     private var imageRequestDone: Boolean = false
 
 
-    fun getArticle(textApiUrl: String, imageApiUrl: String, navigator: NavHostController, context: Context) {
+    fun getArticle(
+        textApiUrl: String,
+        imageApiUrl: String,
+        navigator: NavHostController,
+        context: Context,
+        onResponse: (Boolean) -> Unit
+    ) {
         val outerThis = this
         GlobalScope.launch(Dispatchers.Main) { // Launch a coroutine in the main thread
             try {
@@ -63,11 +70,17 @@ class Article() : ApiResponseListener{
                     Log.e("Image Success", "Image loaded successfully")
                     //Log.e("test", (outerThis.articleImageBitmap != null).toString())
                     imageRequestDone = true
+                    onResponse(true)
                     onResponseSuccess(navigator)
                 }
             } catch (e: Exception) {
                 Log.e("Error", e.message ?: "Unknown error")
-                onResponseError(navigator)
+                onResponse(false)
+                onResponseError(navigator, context)
+            }
+
+            if ("may refer" in outerThis.articleText) {
+                onResponse(false)
             }
         }
     }
@@ -92,8 +105,8 @@ class Article() : ApiResponseListener{
     }
 
 
-    override fun onResponseError(navigator: NavHostController) {
-        navigator.navigate(Routes.Home.route)
+    override fun onResponseError(navigator: NavHostController, context: Context) {
+
     }
 
     private fun handleTextApiResponse(response: JSONObject): Pair<String, String> {
@@ -103,7 +116,7 @@ class Article() : ApiResponseListener{
             val pageObject = pages.getJSONObject(0)
             val title = pageObject.getString("title")
             var extract = pageObject.getString("extract")
-            extract = extract.replace(Regex("<.*?>"), "") // Remove HTML tags
+            //extract = extract.replace(Regex("<.*?>"), "") // Remove HTML tags
             return title to extract
         } else {
             throw JSONException("No page found in response")
