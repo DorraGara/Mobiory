@@ -1,0 +1,17 @@
+
+[
+  {
+    "question": "What is the approximate duration of the French Revolution?",
+    "options": [
+      "From 1789 to 1799", "From 1789 to 1809", "From 1789 to 1839","From 1826 to 1831"
+    ],
+    "correct_answer_index": 0
+  },
+  {
+    "question": "What was the approximate duration of the Lyon Consultation (also known as the Consultation of the Cisalpine Republic), which took place from January 11th to January 26th, 1802, in the former chapel of the Jesuit college of La TrinitÃ© in Lyon",
+    "options": [
+      "From January 11th to January 26th, 1792", "From January 11th to January 26th, 1812","From January 11th to January 26th, 1802"
+    ],
+    "correct_answer_index": 0
+  }
+]

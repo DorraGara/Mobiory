@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ViewList
@@ -48,6 +49,9 @@ import com.example.mobiory.ui.screens.HomeScreen
 import com.example.mobiory.ui.screens.SettingsScreen
 import com.example.mobiory.ui.theme.MobioryTheme
 import dagger.hilt.android.AndroidEntryPoint
+import Quiz
+import QuizScreen
+import androidx.compose.material.icons.outlined.Abc
 
 
 @Preview(showBackground = true)
@@ -86,6 +90,12 @@ class MainActivity : ComponentActivity() {
                     ),
                     //add Quiz and Frise chronologique here
                     BottomNavigationItem(
+                        title = "Quiz",
+                        selectedIcon = Icons.Filled.Abc,
+                        unselectedIcon = Icons.Outlined.Abc,
+                        hasNews = false,
+                    ),
+                    BottomNavigationItem(
                         title = "Settings",
                         selectedIcon = Icons.Filled.Settings,
                         unselectedIcon = Icons.Outlined.Settings,
@@ -112,6 +122,7 @@ class MainActivity : ComponentActivity() {
                                         selected = selectedItemIndex == index,
                                         onClick = {
                                             selectedItemIndex = index
+                                            navController.navigate("quiz")
                                             navController.navigate(item.title)
                                             if (selectedItemIndex == 0)
                                                 setHomeNotifications(false)
@@ -160,6 +171,8 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                                 //add rest of screen composable here (Quiz and frise)
+
+                                composable("Quiz") { Quiz() } // Use lowercase "quiz"
                                 composable(Routes.Settings.route) { SettingsScreen() }
                                 composable(Routes.Article.route) {
                                     val pageTitle =
