@@ -51,7 +51,9 @@ import com.example.mobiory.ui.theme.MobioryTheme
 import dagger.hilt.android.AndroidEntryPoint
 import Quiz
 import QuizScreen
+import TimelineScreen
 import androidx.compose.material.icons.outlined.Abc
+import androidx.media3.common.Timeline
 
 
 @Preview(showBackground = true)
@@ -88,11 +90,18 @@ class MainActivity : ComponentActivity() {
                         unselectedIcon = Icons.Outlined.ViewList,
                         hasNews = false,
                     ),
-                    //add Quiz and Frise chronologique here
+                    //add Quiz
                     BottomNavigationItem(
                         title = "Quiz",
                         selectedIcon = Icons.Filled.Abc,
                         unselectedIcon = Icons.Outlined.Abc,
+                        hasNews = false,
+                    ),
+                    //Frise chronologique here
+                    BottomNavigationItem(
+                        title = "Timeline",
+                        selectedIcon = Icons.Filled.Settings,
+                        unselectedIcon = Icons.Outlined.Settings,
                         hasNews = false,
                     ),
                     BottomNavigationItem(
@@ -123,6 +132,7 @@ class MainActivity : ComponentActivity() {
                                         onClick = {
                                             selectedItemIndex = index
                                             navController.navigate("quiz")
+                                            navController.navigate("timeline")
                                             navController.navigate(item.title)
                                             if (selectedItemIndex == 0)
                                                 setHomeNotifications(false)
@@ -171,7 +181,7 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                                 //add rest of screen composable here (Quiz and frise)
-
+                                composable(Routes.timeline.route){ TimelineScreen(navController,context) }
                                 composable("Quiz") { Quiz() } // Use lowercase "quiz"
                                 composable(Routes.Settings.route) { SettingsScreen() }
                                 composable(Routes.Article.route) {
@@ -223,6 +233,7 @@ sealed class Routes(val route: String) {
     data object Home : Routes("Home")
     data object Event : Routes("Event List")
     data object Settings : Routes("Settings")
+    data object timeline : Routes("timeline")
     data object Article : Routes("Article")
 }
 
